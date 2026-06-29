@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cores de Fundo Principais */
+  --color-bg-main: #0b0d10;       /* Fundo principal do app (escuro profundo) */
+  --color-bg-sidebar: #13161c;    /* Fundo da barra lateral de navegação */
+  --color-bg-card: #1b1f26;       /* Fundo dos cards (Gráfico, Transações, Perfil) */
+  
+  /* Efeito Glassmorphism (Modais e Inputs) */
+  --color-bg-glass: rgba(27, 31, 38, 0.7); /* Fundo semi-transparente para o Modal */
+  --color-border-glass: rgba(255, 255, 255, 0.08); /* Borda sutil dos cards e inputs */
+
+  /* Textos */
+  --color-text-primary: #ffffff;   /* Títulos principais e destaques */
+  --color-text-secondary: #94a3b8; /* Textos secundários, datas e legendas */
+  --color-text-muted: #64748b;     /* Textos desativados ou placeholders */
+
+  /* Cores de Destaque Semântico (Status e Indicadores) */
+  --color-income: #22c55e;        /* Verde Neon para Entradas (R$ 299,36) */
+  --color-expense: #ef4444;       /* Vermelho/Rosa Neon para Saídas (R$ 653,77) */
+  --color-balance: #3b82f6;       /* Azul Neon para Saldo Atual (R$ 270,62) */
+  --color-action: #0ea5e9;        /* Azul claro para o botão "Save Transaction" */
+
+  /* Cores do Gráfico de Pizza (Categorias) */
+  --color-chart-green: #4ade80;   /* Alimentação */
+  --color-chart-blue: #60a5fa;    /* Transporte */
+  --color-chart-orange: #fbd38d;  /* Lazer */
+  --color-chart-purple: #c084fc;  /* Outros / Lucr */
+}
