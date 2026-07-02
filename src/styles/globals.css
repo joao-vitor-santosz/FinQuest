@@ -38,3 +38,13 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+/* Esconde scrollbar no Chrome, Safar e edge */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/*Esconde scrollbar no Firefox */
+.scrollbar-hide {
+    scrollbar-width: none;
+}
