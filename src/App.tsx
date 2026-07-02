@@ -1,5 +1,6 @@
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
+import { DashboardHome } from "./components/DashboardHome";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         
         {/* O Header no topo da página */}
         <Header title="Personal Finance" />
+        <DashboardHome />
 
         {/* O espaço abaixo é onde vão entrar os cards do Dashboard depois */}
         <div className="flex-1">
