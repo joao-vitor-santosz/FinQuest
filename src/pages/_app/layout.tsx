@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_app')({
 
 function AppLayoutComponent() {
   return (
-    <div className="flex h-screen w-screen bg-[#121318] text-white overflow-hidden">
+    <div className="flex h-screen w-screen text-white overflow-hidden">
       
       <Sidebar />
 
