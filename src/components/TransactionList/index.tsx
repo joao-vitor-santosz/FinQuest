@@ -1,7 +1,11 @@
-import { MoreHorizontal, ChevronDown } from "lucide-react";
-import { transactions } from "../../mocks/transactions";
+import { MoreHorizontal, ChevronDown, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { useContext } from "react";
+import { TransactionContext } from "../../context/TransactionContext";
+import formatCurrency from "../../utils/format-currency";
 
 export const TransactionList = () => {
+  const { transactions } = useContext(TransactionContext);
+
   return (
     <div className="flex-1 p-6 max-h-112.5 overflow-hidden rounded-2xl bg-bg-card/40 border border-border-glass backdrop-blur-md flex flex-col justify-between">
       
@@ -13,9 +17,16 @@ export const TransactionList = () => {
         </button>
       </div>
 
+      {transactions.length === 0 && (
+        <div className="flex-1 flex items-center justify-center text-text-secondary text-lg font-medium">
+          Nenhuma transação encontrada.
+        </div>
+      )}
       <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-hide pr-1 scrollbar-thin">
         {transactions.map((transaction) => {
-          const Icon = transaction.icon;
+          const isIncome = transaction.type === 'income';
+          const Icon = isIncome ? ArrowUpRight : ArrowDownLeft;
+          const iconBg = isIncome ? 'bg-income/10 text-income' : 'bg-expense/10 text-expense';
           return (
             <div 
               key={transaction.id} 
@@ -23,18 +34,18 @@ export const TransactionList = () => {
             >
               {/* Lado Esquerdo: Ícone + Título/Data */}
               <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${transaction.iconBg}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}>
                   <Icon size={20} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-md font-medium text-white">{transaction.title}</span>
+                  <span className="text-md font-medium text-white">{transaction.description}</span>
                   <span className="text-sm text-text-secondary">{transaction.date}</span>
                 </div>
               </div>
 
               {/* Lado Direito: Valor */}
               <span className={`text-lg font-semibold ${transaction.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                {transaction.amount}
+                {formatCurrency(transaction.amount)}
               </span>
             </div>
           );

@@ -1,5 +1,8 @@
 import { X } from "lucide-react";
 import { useTransactionForm } from "./add-transaction-form.schema";
+import { useContext } from "react";
+import { TransactionContext } from "../../context/TransactionContext";
+import type { TransactionFormData } from "./add-transaction-form.schema";
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -10,15 +13,18 @@ export const AddTransactionModal = ({
   isOpen,
   onClose,
 }: AddTransactionModalProps) => {
+  // Importamos o hook atualizado que agora já conhece o campo 'date'
   const { register, handleSubmit, errors, setValue, watch, reset } =
     useTransactionForm();
+  const { handleAddTransiction } = useContext(TransactionContext);
 
+  // Monitora o tipo selecionado para estilizar os botões
   const selectedType = watch("type");
 
   if (!isOpen) return null;
 
-  const onSubmit = (data: any) => {
-    console.log("Transação validada com sucesso!", data);
+  const onSubmit = (data: TransactionFormData) => {
+    handleAddTransiction(data);
     reset();
     onClose();
   };
@@ -82,6 +88,27 @@ export const AddTransactionModal = ({
             {errors.amount && (
               <span className="text-xs text-expense font-medium pl-1">
                 {errors.amount.message}
+              </span>
+            )}
+          </div>
+
+          {/* Campo: Data da Transação */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-text-secondary">
+              Data
+            </label>
+            <input
+              {...register("date")}
+              type="date"
+              className={`w-full px-4 py-3 rounded-xl bg-bg-sidebar/60 border text-white focus:outline-none transition-all scheme-dark ${
+                errors.date
+                  ? "border-expense focus:ring-1 focus:ring-expense"
+                  : "border-border-glass/40 focus:border-income"
+              }`}
+            />
+            {errors.date && (
+              <span className="text-xs text-expense font-medium pl-1">
+                {errors.date.message}
               </span>
             )}
           </div>

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// 1. Definição do schema com validação compatível para o formulário
+// 1. Definição do schema com a adição do campo de data
 export const addTransactionFormSchema = z.object({
   description: z.string().trim().nonempty("A descrição é obrigatória"),
   amount: z
@@ -19,11 +19,15 @@ export const addTransactionFormSchema = z.object({
     .refine((value) => ["income", "expense"].includes(value), {
       message: "Selecione o tipo da transação",
     }),
+  date: z
+    .string()
+    .trim()
+    .nonempty("A data é obrigatória"), // <-- Nova validação para a data
 });
 
 export type TransactionFormData = z.infer<typeof addTransactionFormSchema>;
 
-// 2. Hook Customizado exatamente igual ao modelo enviado
+// 2. Hook Customizado com o novo valor padrão
 export const useTransactionForm = () => {
   const {
     register,
@@ -39,6 +43,7 @@ export const useTransactionForm = () => {
       description: "",
       amount: "",
       type: "",
+      date: "", // <-- Inicializa o input de data vazio
     },
     criteriaMode: "all",
   });
