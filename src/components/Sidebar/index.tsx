@@ -25,11 +25,11 @@ export const Sidebar = () => {
         <ul className="flex flex-col items-center gap-3">
           <li className="relative w-full flex items-center justify-center">
             <div className="absolute -left-4 w-1 h-8 bg-income rounded-r-full shadow-[0_0_8px_#34d399]" />
-              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-border-glass">
-        <a href="#">
-          <LayoutGrid size={20} />
-        </a>
-      </div>
+            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-border-glass">
+              <a href="#">
+                <LayoutGrid size={20} />
+              </a>
+            </div>
           </li>
           <li className="w-10 h-10 flex items-center justify-center rounded-lg">
             <a href="#">
