@@ -32,7 +32,7 @@ export const TransactionList = () => {
             Nenhuma transação encontrada.
           </div>
         )}
-        <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-hide pr-1 scrollbar-thin">
+        <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-hide pr-1">
           {transactions.map((transaction) => {
             const isIncome = transaction.type === "income";
             const Icon = isIncome ? ArrowUpRight : ArrowDownLeft;

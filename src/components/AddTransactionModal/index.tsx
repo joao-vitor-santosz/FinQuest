@@ -1,6 +1,6 @@
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { useTransactionForm } from "./add-transaction-form.schema";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 import type { TransactionFormData } from "./add-transaction-form.schema";
 
@@ -9,17 +9,26 @@ interface AddTransactionModalProps {
   onClose: () => void;
 }
 
+const paymentOptions = [
+  { value: "pix", label: "Pix" },
+  { value: "dinheiro", label: "Dinheiro" },
+  { value: "debito", label: "Débito" },
+  { value: "credito", label: "Crédito" },
+];
+
 export const AddTransactionModal = ({
   isOpen,
   onClose,
 }: AddTransactionModalProps) => {
-  // Importamos o hook atualizado que agora já conhece o campo 'date'
   const { register, handleSubmit, errors, setValue, watch, reset } =
     useTransactionForm();
   const { handleAddTransiction } = useContext(TransactionContext);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  // Monitora o tipo selecionado para estilizar os botões
   const selectedType = watch("type");
+  const selectedPayment = watch("paymentMethod");
+  const selectedPaymentLabel =
+    paymentOptions.find((option) => option.value === selectedPayment)?.label ?? "";
 
   if (!isOpen) return null;
 
@@ -31,7 +40,7 @@ export const AddTransactionModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md p-6 rounded-2xl bg-bg-card/80 border border-border-glass backdrop-blur-md flex flex-col gap-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full h-[80vh] overflow-hidden overflow-y-auto  scrollbar-hide max-w-md p-6 rounded-2xl bg-bg-card/80 border border-border-glass backdrop-blur-md flex flex-col gap-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         {/* Cabeçalho */}
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-semibold text-white">Nova Transação</h3>
@@ -88,6 +97,69 @@ export const AddTransactionModal = ({
             {errors.amount && (
               <span className="text-xs text-expense font-medium pl-1">
                 {errors.amount.message}
+              </span>
+            )}
+          </div>
+
+          {/* Campo: Método de pagamento */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-text-secondary">
+              Método de pagamento
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsPaymentOpen((prev) => !prev)}
+                className={`flex w-full items-center justify-between px-4 py-3 rounded-xl bg-bg-sidebar/60 border text-left transition-all ${
+                  errors.paymentMethod
+                    ? "border-expense focus:ring-1 focus:ring-expense"
+                    : "border-border-glass/40 focus:border-income"
+                } ${selectedPayment ? "text-white" : "text-text-secondary/60"}`}
+              >
+                <span>
+                  {selectedPaymentLabel || "Selecione uma forma de pagamento"}
+                </span>
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform ${
+                    isPaymentOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isPaymentOpen && (
+                <div className="absolute z-10 mt-2 w-full rounded-xl border border-border-glass/40 bg-bg-sidebar/80 p-2 shadow-2xl backdrop-blur-md">
+                  {paymentOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => {
+                        setValue("paymentMethod", option.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                          shouldTouch: true,
+                        });
+                        setIsPaymentOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-all ${
+                        selectedPayment === option.value
+                          ? "bg-income/15 text-income"
+                          : "text-text-secondary hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <span>{option.label}</span>
+                      {selectedPayment === option.value && (
+                        <span className="text-income">✓</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <input type="hidden" {...register("paymentMethod")} />
+            {errors.paymentMethod && (
+              <span className="text-xs text-expense font-medium pl-1">
+                {errors.paymentMethod.message}
               </span>
             )}
           </div>

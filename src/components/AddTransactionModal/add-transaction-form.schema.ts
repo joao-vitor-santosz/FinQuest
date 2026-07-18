@@ -22,7 +22,11 @@ export const addTransactionFormSchema = z.object({
   date: z
     .string()
     .trim()
-    .nonempty("A data é obrigatória"), // <-- Nova validação para a data
+    .nonempty("A data é obrigatória"),
+  paymentMethod: z
+    .string()
+    .trim()
+    .nonempty("O método de pagamento é obrigatório")
 });
 
 export type TransactionFormData = z.infer<typeof addTransactionFormSchema>;
@@ -43,7 +47,8 @@ export const useTransactionForm = () => {
       description: "",
       amount: "",
       type: "",
-      date: "", // <-- Inicializa o input de data vazio
+      date: "",
+      paymentMethod: "",
     },
     criteriaMode: "all",
   });
