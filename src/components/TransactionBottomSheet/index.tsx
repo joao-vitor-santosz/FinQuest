@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CarouselOptions } from "../CarouselOptions";
-import { ChangeSortOrder } from "../ChangeSortOrder";
+import { Filters } from "../Filters";
 
 interface TransactionBottomSheetProps {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export const TransactionBottomSheet = ({
             onNavigateToSort={() => setActiveTab("sort")}
             onClose={onClose}
           />
-          <ChangeSortOrder onBack={() => setActiveTab("main")} />
+          <Filters onBack={() => setActiveTab("main")} />
         </div>
       </div>
     </>

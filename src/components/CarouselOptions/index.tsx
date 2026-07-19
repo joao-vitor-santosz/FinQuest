@@ -1,7 +1,7 @@
 import {
   History,
   Upload,
-  ArrowUpDown,
+  SlidersHorizontal,
   Trash,
   ChevronRight,
 } from "lucide-react";
@@ -15,7 +15,7 @@ interface CarouselOptionsProps {
 const navigationItems = [
   { label: "Ver histórico completo", icon: History, href: "#" },
   { label: "Exportar dados CSV", icon: Upload, href: "#" },
-  { label: "Alterar ordenação", icon: ArrowUpDown, href: "#" },
+  { label: "Filtros", icon: SlidersHorizontal, href: "#" },
   { label: "Excluir", icon: Trash, href: "#" },
 ];
 
@@ -34,7 +34,7 @@ export const CarouselOptions = ({
                 href={item.href}
                 className="flex items-center justify-between w-full"
                 onClick={(e) => {
-                  if (item.label === "Alterar ordenação") {
+                  if (item.label === "Filtros") {
                     e.preventDefault();
                     onNavigateToSort();
                   }
@@ -47,7 +47,7 @@ export const CarouselOptions = ({
                   />
                   {item.label}
                 </div>
-                {item.label === "Alterar ordenação" && (
+                {item.label === "Filtros" && (
                   <ChevronRight size={20} className="text-white/40" />
                 )}
               </a>
