@@ -1,33 +1,13 @@
 import { useState } from "react";
 import { BottomPanelHeader } from "../bottomPanelHeader";
 import { ArrowLeft, ChevronDown } from "lucide-react";
+import { sortItems, periodOptions, transactionOptions } from "./filtersCategories";
 
-interface ChangeSortOrderProps {
+interface FiltersProps {
   onBack: () => void;
 }
 
-const sortItems = [
-  { label: "Período", value: "time" },
-  { label: "Transações", value: "transactions" },
-  { label: "Ordem alfabética (A-Z)", value: "az" },
-];
-
-const periodOptions = [
-  { label: "Últimos ano", value: "last-year" },
-  { label: "Hoje", value: "today" },
-  { label: "Últimos 7 dias", value: "7d" },
-  { label: "Últimos 15 dias", value: "15d" },
-  { label: "Últimos 30 dias", value: "30d" },
-  { label: "Últimos 6 meses", value: "6m" },
-];
-
-const transactionOptions = [
-  { label: "Apenas entradas", value: "income" },
-  { label: "Apenas saídas", value: "expenses" },
-  { label: "Todas", value: "all" },
-];
-
-export const Filters = ({ onBack }: ChangeSortOrderProps) => {
+export const Filters = ({ onBack }: FiltersProps) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<string | null>("last-year");
   const [selectedTransaction, setSelectedTransaction] = useState<string | null>("all");

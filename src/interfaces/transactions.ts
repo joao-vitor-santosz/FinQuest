@@ -5,3 +5,7 @@ export interface TransactionTypes {
   type: string;
   date: string;
 }
+
+export interface FilterContextType {
+  id: 
+}

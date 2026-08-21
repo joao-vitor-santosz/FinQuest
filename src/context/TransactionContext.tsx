@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import type { TransactionTypes } from "../interfaces/transactions";
+import { sortItems, periodOptions, transactionOptions } from "../components/Filters/filtersCategories";
 
 interface TransactionContextData {
   transactions: TransactionTypes[];
@@ -7,6 +8,7 @@ interface TransactionContextData {
   expenseTotal: number;
   balanceTotal: number;
   handleAddTransiction: (data: Omit<TransactionTypes, "id">) => void;
+  filteredTransactions: () => void;
 }
 
 export const TransactionContext = createContext<TransactionContextData>(
@@ -19,6 +21,12 @@ export const TransactionProvider = ({
   children: React.ReactNode;
 }) => {
   const [transactions, setTransactions] = useState<TransactionTypes[]>([]);
+
+  const [ filters, setFilters ] = useState()
+
+  const filteredTransactions = () => {
+    
+  }
 
   const incomeTotal = transactions.reduce((acumulador, transaction) => {
   
@@ -59,6 +67,7 @@ export const TransactionProvider = ({
         expenseTotal,
         balanceTotal,
         handleAddTransiction,
+        filteredTransactions
       }}
     >
       {children}
