@@ -2,10 +2,12 @@ export interface TransactionTypes {
   id: string;
   description: string;
   amount: string;
-  type: string;
+  type: "income" | "expense";
   date: string;
 }
 
-export interface FilterContextType {
-  id: 
+export interface TransactionFilters {
+  period: string | null;
+  type: "all" | "income" | "expense";
+  sort: "az" | "za" | null;
 }

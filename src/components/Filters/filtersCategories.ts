@@ -14,7 +14,7 @@ export const periodOptions = [
 
 export const transactionOptions = [
   { label: "Apenas entradas", value: "income" },
-  { label: "Apenas saídas", value: "expenses" },
+  { label: "Apenas saídas", value: "expense" },
   { label: "Ordem alfabética (A-Z)", value: "az" },
   { label: "Todas", value: "all" },
 ];
