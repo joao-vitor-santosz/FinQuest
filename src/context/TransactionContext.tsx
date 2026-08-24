@@ -13,6 +13,8 @@ interface TransactionContextData {
   handleAddTransaction: (data: Omit<TransactionTypes, "id">) => void;
   filteredTransactions: TransactionTypes[];
   setTransactionType: (type: TransactionFilters["type"]) => void;
+  setTransactionPeriod: (period: TransactionFilters["period"]) => void;
+  setTransactionSort: (sort: TransactionFilters["sort"]) => void;
 }
 
 export const TransactionContext = createContext<TransactionContextData>(
@@ -39,13 +41,70 @@ export const TransactionProvider = ({
     }));
   };
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    if (filters.type === "all") {
-      return true;
-    }
+  const setTransactionPeriod = (period: TransactionFilters["period"]) => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      period,
+    }));
+  };
 
-    return transaction.type === filters.type;
-  });
+  const setTransactionSort = (sort: TransactionFilters["sort"]) => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      sort,
+    }));
+  };
+
+  const filteredTransactions = transactions
+    .filter((transaction) => {
+      if (filters.type === "all") {
+        return true;
+      }
+
+      return transaction.type === filters.type;
+    })
+    .filter((transaction) => {
+      if (filters.period === null) {
+        return true;
+      }
+
+      const transactionDate = new Date(`${transaction.date}T00:00:00`);
+      if (Number.isNaN(transactionDate.getTime())) {
+        return false;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (filters.period === "today") {
+        return transactionDate.getTime() === today.getTime();
+      }
+
+      const startDate = new Date(today);
+      if (filters.period === "last-year") {
+        startDate.setFullYear(startDate.getFullYear() - 1);
+      } else if (filters.period === "6m") {
+        startDate.setMonth(startDate.getMonth() - 6);
+      } else {
+        const days = Number.parseInt(filters.period, 10);
+        startDate.setDate(startDate.getDate() - (days - 1));
+      }
+
+      return transactionDate >= startDate && transactionDate <= today;
+    })
+    .sort((firstTransaction, secondTransaction) => {
+      if (filters.sort === null) {
+        return 0;
+      }
+
+      const comparison = firstTransaction.description.localeCompare(
+        secondTransaction.description,
+        "pt-BR",
+        { sensitivity: "base" },
+      );
+
+      return filters.sort === "az" ? comparison : -comparison;
+    });
 
   const incomeTotal = transactions.reduce((acumulador, transaction) => {
     const valueAsNumber = Number(transaction.amount.replace(",", "."));
@@ -87,7 +146,9 @@ export const TransactionProvider = ({
         balanceTotal,
         handleAddTransaction,
         filteredTransactions,
-        setTransactionType
+        setTransactionType,
+        setTransactionPeriod,
+        setTransactionSort,
       }}
     >
       {children}

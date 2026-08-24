@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { BottomPanelHeader } from "../bottomPanelHeader";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import {
+  alphabeticalSortOptions,
   sortItems,
   periodOptions,
   transactionOptions,
@@ -13,20 +14,35 @@ interface FiltersProps {
 }
 
 export const Filters = ({ onBack }: FiltersProps) => {
-  const { filters, setTransactionType } = useContext(TransactionContext);
+  const {
+    filters,
+    setTransactionPeriod,
+    setTransactionSort,
+    setTransactionType,
+  } = useContext(TransactionContext);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(
-    "last-year",
-  );
-  const [azChecked, setAzChecked] = useState<boolean>(false);
 
-  const toggleOpen = (index: number, value: string) => {
-    if (value === "az") return;
+  const toggleOpen = (index: number) => {
     setOpenIndex((current) => (current === index ? null : index));
   };
 
   const handleSelectPeriod = (value: string) => {
-    setSelectedPeriod((current) => (current === value ? null : value));
+    if (
+      value === "today" ||
+      value === "7d" ||
+      value === "15d" ||
+      value === "30d" ||
+      value === "6m" ||
+      value === "last-year"
+    ) {
+      setTransactionPeriod(filters.period === value ? null : value);
+    }
+  };
+
+  const handleSelectSort = (value: string) => {
+    if (value === "az" || value === "za") {
+      setTransactionSort(filters.sort === value ? null : value);
+    }
   };
 
   const handleSelectTransaction = (value: string) => {
@@ -54,34 +70,16 @@ export const Filters = ({ onBack }: FiltersProps) => {
                 key={index}
                 className="flex flex-col border-b border-border-glass pb-4 cursor-pointer hover:text-white transition-colors"
               >
-                {item.value === "az" ? (
-                  <label
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span>{item.label}</span>
-                    <span className="flex h-6 w-6 items-center justify-center rounded-md">
-                      <input
-                        type="checkbox"
-                        checked={azChecked}
-                        onChange={(e) => setAzChecked(e.target.checked)}
-                        className="h-4 w-4 rounded-sm border-0 bg-transparent accent-white"
-                        aria-label="Ordem alfabética (A-Z)"
-                      />
-                    </span>
-                  </label>
-                ) : (
-                  <div
-                    className="flex items-center justify-between"
-                    onClick={() => toggleOpen(index, item.value)}
-                  >
-                    <p>{item.label}</p>
-                    <ChevronDown
-                      size={18}
-                      className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                    />
-                  </div>
-                )}
+                <div
+                  className="flex items-center justify-between"
+                  onClick={() => toggleOpen(index)}
+                >
+                  <p>{item.label}</p>
+                  <ChevronDown
+                    size={18}
+                    className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                  />
+                </div>
 
                 <div
                   className={`grid transition-all duration-300 ease-in-out ${isOpen && item.value === "time" ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0 mt-0"}`}
@@ -89,7 +87,7 @@ export const Filters = ({ onBack }: FiltersProps) => {
                   <ul className="overflow-hidden flex flex-col gap-3 pl-2">
                     {item.value === "time" &&
                       periodOptions.map((opt) => {
-                        const isSelected = selectedPeriod === opt.value;
+                        const isSelected = filters.period === opt.value;
 
                         return (
                           <li key={opt.value}>
@@ -107,6 +105,39 @@ export const Filters = ({ onBack }: FiltersProps) => {
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={() => handleSelectPeriod(opt.value)}
+                                  className="h-4 w-4 rounded-sm border-0 bg-transparent accent-white"
+                                  aria-label={opt.label}
+                                />
+                              </span>
+                            </label>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </div>
+
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${isOpen && item.value === "sort" ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0 mt-0"}`}
+                >
+                  <ul className="overflow-hidden flex flex-col gap-3 pl-2">
+                    {item.value === "sort" &&
+                      alphabeticalSortOptions.map((opt) => {
+                        const isSelected = filters.sort === opt.value;
+
+                        return (
+                          <li key={opt.value}>
+                            <label
+                              className="flex items-center justify-between gap-3 cursor-pointer px-2 py-1.5 transition-colors"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span className="select-none text-sm">
+                                {opt.label}
+                              </span>
+                              <span className="flex h-6 w-6 items-center justify-center rounded-md">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleSelectSort(opt.value)}
                                   className="h-4 w-4 rounded-sm border-0 bg-transparent accent-white"
                                   aria-label={opt.label}
                                 />

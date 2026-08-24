@@ -8,7 +8,7 @@ export interface TransactionTypes {
 }
 
 export interface TransactionFilters {
-  period: string | null;
+  period: "last-year" | "today" | "7d" | "15d" | "30d" | "6m" | null;
   type: "all" | "income" | "expense";
   sort: "az" | "za" | null;
 }
