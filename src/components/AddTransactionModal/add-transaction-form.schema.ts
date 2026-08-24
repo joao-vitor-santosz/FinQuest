@@ -13,23 +13,29 @@ export const addTransactionFormSchema = z.object({
       message: "Insira um número válido",
     }),
   type: z
-    .string()
-    .trim()
-    .nonempty("Selecione o tipo da transação")
-    .refine((value) => ["income", "expense"].includes(value), {
+    .union([z.literal(""), z.literal("income"), z.literal("expense")])
+    .refine((value) => value !== "", {
       message: "Selecione o tipo da transação",
-    }),
-  date: z
-    .string()
-    .trim()
-    .nonempty("A data é obrigatória"),
+    })
+    .transform((value) => value),
+  date: z.string().trim().nonempty("A data é obrigatória"),
   paymentMethod: z
-    .string()
-    .trim()
-    .nonempty("O método de pagamento é obrigatório")
+    .union([
+      z.literal(""),
+      z.literal("pix"),
+      z.literal("dinheiro"),
+      z.literal("debito"),
+      z.literal("credito"),
+    ])
+    .refine((value) => value !== "", {
+      message: "O método de pagamento é obrigatório",
+    })
+    .transform((value) => value),
 });
 
-export type TransactionFormData = z.infer<typeof addTransactionFormSchema>;
+export type TransactionFormInput = z.input<typeof addTransactionFormSchema>;
+
+export type TransactionFormData = z.output<typeof addTransactionFormSchema>;
 
 // 2. Hook Customizado com o novo valor padrão
 export const useTransactionForm = () => {
@@ -40,7 +46,7 @@ export const useTransactionForm = () => {
     setValue,
     watch,
     reset,
-  } = useForm<TransactionFormData>({
+  } = useForm<TransactionFormInput, undefined, TransactionFormData>({
     resolver: zodResolver(addTransactionFormSchema),
     mode: "onBlur",
     defaultValues: {

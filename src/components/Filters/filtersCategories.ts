@@ -4,7 +4,7 @@ export const sortItems = [
 ];
 
 export const periodOptions = [
-  { label: "Últimos ano", value: "last-year" },
+  { label: "Último ano", value: "last-year" },
   { label: "Hoje", value: "today" },
   { label: "Últimos 7 dias", value: "7d" },
   { label: "Últimos 15 dias", value: "15d" },

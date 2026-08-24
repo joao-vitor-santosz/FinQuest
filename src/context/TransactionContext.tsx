@@ -6,11 +6,13 @@ import type {
 
 interface TransactionContextData {
   transactions: TransactionTypes[];
+  filters: TransactionFilters;
   incomeTotal: number;
   expenseTotal: number;
   balanceTotal: number;
   handleAddTransaction: (data: Omit<TransactionTypes, "id">) => void;
-  filteredTransactions?: TransactionTypes[];
+  filteredTransactions: TransactionTypes[];
+  setTransactionType: (type: TransactionFilters["type"]) => void;
 }
 
 export const TransactionContext = createContext<TransactionContextData>(
@@ -28,6 +30,21 @@ export const TransactionProvider = ({
     period: null,
     type: "all",
     sort: null,
+  });
+
+  const setTransactionType = (type: TransactionFilters["type"]) => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      type,
+    }));
+  };
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    if (filters.type === "all") {
+      return true;
+    }
+
+    return transaction.type === filters.type;
   });
 
   const incomeTotal = transactions.reduce((acumulador, transaction) => {
@@ -64,10 +81,13 @@ export const TransactionProvider = ({
     <TransactionContext.Provider
       value={{
         transactions,
+        filters,
         incomeTotal,
         expenseTotal,
         balanceTotal,
         handleAddTransaction,
+        filteredTransactions,
+        setTransactionType
       }}
     >
       {children}

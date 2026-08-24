@@ -4,6 +4,7 @@ export interface TransactionTypes {
   amount: string;
   type: "income" | "expense";
   date: string;
+  paymentMethod: "pix" | "dinheiro" | "debito" | "credito";
 }
 
 export interface TransactionFilters {

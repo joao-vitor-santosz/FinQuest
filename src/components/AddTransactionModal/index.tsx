@@ -14,7 +14,7 @@ const paymentOptions = [
   { value: "dinheiro", label: "Dinheiro" },
   { value: "debito", label: "Débito" },
   { value: "credito", label: "Crédito" },
-];
+] as const;
 
 export const AddTransactionModal = ({
   isOpen,
@@ -22,7 +22,7 @@ export const AddTransactionModal = ({
 }: AddTransactionModalProps) => {
   const { register, handleSubmit, errors, setValue, watch, reset } =
     useTransactionForm();
-  const { handleAddTransiction } = useContext(TransactionContext);
+  const { handleAddTransaction } = useContext(TransactionContext);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const selectedType = watch("type");
@@ -33,7 +33,7 @@ export const AddTransactionModal = ({
   if (!isOpen) return null;
 
   const onSubmit = (data: TransactionFormData) => {
-    handleAddTransiction(data);
+    handleAddTransaction(data);
     reset();
     onClose();
   };

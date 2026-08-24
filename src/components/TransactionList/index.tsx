@@ -11,7 +11,7 @@ import formatCurrency from "../../utils/format-currency";
 
 export const TransactionList = () => {
   const [ isBottomSheetOpen, setIsBottomSheetOpen ] = useState(false);
-  const { transactions } = useContext(TransactionContext);
+  const { filteredTransactions } = useContext(TransactionContext);
 
   return (
     <>
@@ -27,13 +27,13 @@ export const TransactionList = () => {
           </button>
         </div>
 
-        {transactions.length === 0 && (
+        {filteredTransactions.length === 0 && (
           <div className="flex-1 flex items-center justify-center text-text-secondary text-lg font-medium">
             Nenhuma transação encontrada.
           </div>
         )}
         <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-hide pr-1">
-          {transactions.map((transaction) => {
+          {filteredTransactions.map((transaction) => {
             const isIncome = transaction.type === "income";
             const Icon = isIncome ? ArrowUpRight : ArrowDownLeft;
             const iconBg = isIncome
@@ -73,7 +73,7 @@ export const TransactionList = () => {
         </div>
 
         {/* Seta para expandir no final (como no mockup) - flex-shrink-0 fixado */}
-        {transactions.length >= 5 && (
+        {filteredTransactions.length >= 5 && (
           <div className="flex justify-center mt-3 shrink-0">
             <button className="text-text-secondary hover:text-text-primary transition-all animate-bounce">
               <ChevronDown size={20} />
