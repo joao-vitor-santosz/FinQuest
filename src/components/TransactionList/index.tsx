@@ -183,7 +183,7 @@ export const TransactionList = () => {
                       {transaction.description}
                     </span>
                     <span className="text-sm text-text-secondary">
-                      {transaction.date}
+                      {transaction.date} - {transaction.paymentMethod}
                     </span>
                   </div>
                 </li>

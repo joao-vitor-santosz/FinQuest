@@ -14,6 +14,9 @@ interface TransactionContextData {
   handleDeleteTransactions: (transactionIds: string[]) => void;
   filteredTransactions: TransactionTypes[];
   setTransactionType: (type: TransactionFilters["type"]) => void;
+  setTransactionPaymentMethod: (
+    paymentMethod: TransactionFilters["paymentMethod"],
+  ) => void;
   setTransactionPeriod: (period: TransactionFilters["period"]) => void;
   setTransactionSort: (sort: TransactionFilters["sort"]) => void;
 }
@@ -32,6 +35,7 @@ export const TransactionProvider = ({
   const [filters, setFilters] = useState<TransactionFilters>({
     period: null,
     type: "all",
+    paymentMethod: "all",
     sort: null,
   });
 
@@ -49,6 +53,15 @@ export const TransactionProvider = ({
     }));
   };
 
+  const setTransactionPaymentMethod = (
+    paymentMethod: TransactionFilters["paymentMethod"],
+  ) => {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      paymentMethod,
+    }));
+  };
+
   const setTransactionSort = (sort: TransactionFilters["sort"]) => {
     setFilters((currentFilters) => ({
       ...currentFilters,
@@ -63,6 +76,13 @@ export const TransactionProvider = ({
       }
 
       return transaction.type === filters.type;
+    })
+    .filter((transaction) => {
+      if (filters.paymentMethod === "all") {
+        return true;
+      }
+
+      return transaction.paymentMethod === filters.paymentMethod;
     })
     .filter((transaction) => {
       if (filters.period === null) {
@@ -158,6 +178,7 @@ export const TransactionProvider = ({
         handleDeleteTransactions,
         filteredTransactions,
         setTransactionType,
+        setTransactionPaymentMethod,
         setTransactionPeriod,
         setTransactionSort,
       }}

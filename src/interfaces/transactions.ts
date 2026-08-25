@@ -10,5 +10,6 @@ export interface TransactionTypes {
 export interface TransactionFilters {
   period: "last-year" | "today" | "7d" | "15d" | "30d" | "6m" | null;
   type: "all" | "income" | "expense";
+  paymentMethod: TransactionTypes["paymentMethod"] | "all";
   sort: "az" | "za" | null;
 }

@@ -1,6 +1,7 @@
 export const sortItems = [
   { label: "Período", value: "time" },
-  { label: "Transações", value: "transactions" },
+  { label: "Tipo de transação", value: "transactions" },
+  { label: "Método de pagamento", value: "payment-method" },
   { label: "Ordenação", value: "sort" },
 ];
 
@@ -18,6 +19,14 @@ export const transactionOptions = [
   { label: "Apenas saídas", value: "expense" },
   { label: "Todas", value: "all" },
 ];
+
+export const paymentMethodOptions = [
+  { label: "Pix", value: "pix" },
+  { label: "Dinheiro", value: "dinheiro" },
+  { label: "Débito", value: "debito" },
+  { label: "Crédito", value: "credito" },
+  { label: "Todos", value: "all" },
+] as const;
 
 export const alphabeticalSortOptions = [
   { label: "Alfabética (A-Z)", value: "az" },

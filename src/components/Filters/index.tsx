@@ -3,6 +3,7 @@ import { BottomPanelHeader } from "../bottomPanelHeader";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import {
   alphabeticalSortOptions,
+  paymentMethodOptions,
   sortItems,
   periodOptions,
   transactionOptions,
@@ -16,6 +17,7 @@ interface FiltersProps {
 export const Filters = ({ onBack }: FiltersProps) => {
   const {
     filters,
+    setTransactionPaymentMethod,
     setTransactionPeriod,
     setTransactionSort,
     setTransactionType,
@@ -48,6 +50,18 @@ export const Filters = ({ onBack }: FiltersProps) => {
   const handleSelectTransaction = (value: string) => {
     if (value === "all" || value === "income" || value === "expense") {
       setTransactionType(value);
+    }
+  };
+
+  const handleSelectPaymentMethod = (value: string) => {
+    if (
+      value === "all" ||
+      value === "pix" ||
+      value === "dinheiro" ||
+      value === "debito" ||
+      value === "credito"
+    ) {
+      setTransactionPaymentMethod(value);
     }
   };
 
@@ -174,6 +188,41 @@ export const Filters = ({ onBack }: FiltersProps) => {
                                   checked={isSelected}
                                   onChange={() =>
                                     handleSelectTransaction(opt.value)
+                                  }
+                                  className="h-4 w-4 rounded-sm border-0 bg-transparent accent-white"
+                                  aria-label={opt.label}
+                                />
+                              </span>
+                            </label>
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </div>
+
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${isOpen && item.value === "payment-method" ? "grid-rows-[1fr] opacity-100 mt-3" : "grid-rows-[0fr] opacity-0 mt-0"}`}
+                >
+                  <ul className="overflow-hidden flex flex-col gap-3 pl-2">
+                    {item.value === "payment-method" &&
+                      paymentMethodOptions.map((opt) => {
+                        const isSelected = filters.paymentMethod === opt.value;
+
+                        return (
+                          <li key={opt.value}>
+                            <label
+                              className="flex items-center justify-between gap-3 cursor-pointer px-2 py-1.5 transition-colors"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <span className="select-none text-sm">
+                                {opt.label}
+                              </span>
+                              <span className="flex h-6 w-6 items-center justify-center rounded-md">
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() =>
+                                    handleSelectPaymentMethod(opt.value)
                                   }
                                   className="h-4 w-4 rounded-sm border-0 bg-transparent accent-white"
                                   aria-label={opt.label}
