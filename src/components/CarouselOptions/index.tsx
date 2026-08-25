@@ -5,7 +5,10 @@ import {
   Trash,
   ChevronRight,
 } from "lucide-react";
+import { useContext } from "react";
 import { BottomPanelHeader } from "../bottomPanelHeader";
+import { TransactionContext } from "../../context/TransactionContext";
+import { exportTransactionsToCsv } from "../../utils/export-transactions-csv";
 
 interface CarouselOptionsProps {
   onClose: () => void;
@@ -25,6 +28,8 @@ export const CarouselOptions = ({
   onStartDelete,
   onNavigateToSort,
 }: CarouselOptionsProps) => {
+  const { filteredTransactions } = useContext(TransactionContext);
+
   return (
     <nav className="w-1/2 h-full flex flex-col justify-between py-7 px-5">
       <div className="flex flex-col gap-5 h-full justify-around">
@@ -44,6 +49,12 @@ export const CarouselOptions = ({
                   if (item.label === "Excluir") {
                     e.preventDefault();
                     onStartDelete();
+                  }
+
+                  if (item.label === "Exportar dados CSV") {
+                    e.preventDefault();
+                    exportTransactionsToCsv(filteredTransactions);
+                    onClose();
                   }
                 }}
               >
