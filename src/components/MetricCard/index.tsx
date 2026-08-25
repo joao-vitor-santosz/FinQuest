@@ -46,7 +46,7 @@ export const MetricCard = ({ title, value, icon: Icon, type }: MetricCardProps) 
       </div>
 
       {/* Linha Inferior: Valor Monetário */}
-      <div className={`break-words text-2xl font-bold tracking-tight lg:text-4xl ${currentStyle.textColor}`}>
+      <div className={`wrap-break-word text-2xl font-bold tracking-tight lg:text-4xl ${currentStyle.textColor}`}>
         {value}
       </div>
 
