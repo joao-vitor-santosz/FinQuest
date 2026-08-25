@@ -11,10 +11,10 @@ export const CategoryChart = () => {
   ];
 
   return (
-    <div className="flex-1 p-6 max-h-112.5 w-full rounded-2xl bg-bg-card/40 border border-border-glass backdrop-blur-md flex flex-col justify-between">
+    <div className="flex w-full flex-1 flex-col justify-between rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:max-h-112.5 sm:p-6">
       {/* Título do Card */}
       <div className="mb-4">
-        <h3 className="text-3xl font-semibold text-white">Categorias</h3>
+          <h3 className="text-2xl font-semibold text-white sm:text-3xl">Categorias</h3>
       </div>
 
       <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-8">
@@ -24,7 +24,7 @@ export const CategoryChart = () => {
           </div>
         ) : (
           <>
-            <div className="w-50 h-50 flex items-center justify-center relative">
+          <div className="relative flex h-52 w-52 items-center justify-center sm:h-50 sm:w-50">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

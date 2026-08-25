@@ -22,7 +22,7 @@ export const TransactionBottomSheet = ({
         onClick={activeTab === "main" ? onClose : () => setActiveTab("main")}
       />
       <div
-        className={`${!isOpen ? "translate-y-full sm:translate-y-0 sm:translate-x-full" : "translate-y-0 sm:translate-x-0"} ${activeTab === "sort" ? "h-[90vh]" : ""} transition-transform duration-300 ease-in-out fixed left-0 right-0 bottom-0 w-full z-999 bg-bg-card rounded-t-2xl h-[60vh] overflow-hidden sm:left-auto sm:right-0 sm:h-full sm:w-100 sm:bottom-0 sm:top-0 sm:rounded-t-none sm:rounded-l-xl`}
+        className={`${!isOpen ? "translate-y-full sm:translate-y-0 sm:translate-x-full" : "translate-y-0 sm:translate-x-0"} ${activeTab === "sort" ? "h-[90vh]" : ""} fixed bottom-0 left-0 right-0 z-999 h-[70vh] w-full overflow-hidden rounded-t-2xl bg-bg-card transition-transform duration-300 ease-in-out sm:bottom-0 sm:left-auto sm:right-0 sm:top-0 sm:h-full sm:w-100 sm:rounded-l-xl sm:rounded-t-none`}
       >
         <div
           className={`${

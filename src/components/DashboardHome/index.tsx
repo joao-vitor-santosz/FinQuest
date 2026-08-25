@@ -11,10 +11,10 @@ export const DashboardHome = () => {
     useContext(TransactionContext);
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="flex w-full flex-col gap-4 sm:gap-6">
       
       {/* Linha dos Cards de Métrica (Layout Responsivo) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+      <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
         <MetricCard
           title="Total de Entradas"
           value={formatCurrency(incomeTotal)}
@@ -36,7 +36,7 @@ export const DashboardHome = () => {
       </div>
 
       {/* Gráfico + Transações */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-stretch">
+      <div className="grid w-full grid-cols-1 items-stretch gap-4 sm:gap-6 lg:grid-cols-2">
         
         {/* Gráfico */}
         <CategoryChart />

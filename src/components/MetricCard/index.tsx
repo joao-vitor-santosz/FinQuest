@@ -33,7 +33,7 @@ export const MetricCard = ({ title, value, icon: Icon, type }: MetricCardProps) 
   const currentStyle = cardStyles[type];
 
   return (
-    <div className={`flex-1 min-w-62.5 p-6 rounded-2xl bg-bg-card/40 border ${currentStyle.borderColor} ${currentStyle.shadowColor} backdrop-blur-md flex flex-col gap-4 transition-all hover:scale-[1.01]`}>
+    <div className={`flex min-w-0 flex-col gap-4 rounded-2xl border bg-bg-card/40 p-4 backdrop-blur-md transition-all hover:scale-[1.01] sm:p-6 ${currentStyle.borderColor} ${currentStyle.shadowColor}`}>
       
       {/* Linha Superior: Título e Ícone de Status */}
       <div className="flex items-center justify-between">
@@ -46,7 +46,7 @@ export const MetricCard = ({ title, value, icon: Icon, type }: MetricCardProps) 
       </div>
 
       {/* Linha Inferior: Valor Monetário */}
-      <div className={`text-2xl lg:text-4xl font-bold tracking-tight ${currentStyle.textColor}`}>
+      <div className={`break-words text-2xl font-bold tracking-tight lg:text-4xl ${currentStyle.textColor}`}>
         {value}
       </div>
 

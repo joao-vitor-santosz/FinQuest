@@ -9,11 +9,11 @@ export const Route = createFileRoute('/_app')({
 
 function AppLayoutComponent() {
   return (
-    <div className="flex h-screen w-screen text-white overflow-hidden">
+    <div className="flex min-h-screen w-full text-white sm:h-screen sm:overflow-hidden">
       
       <Sidebar />
 
-      <main className="flex-1 h-full overflow-y-auto px-8 py-6 lg:px-12 flex flex-col">
+      <main className="h-screen min-w-0 flex-1 overflow-y-auto px-4 py-4 pb-24 sm:px-6 sm:py-6 sm:pb-6 lg:px-12 flex flex-col">
         
         <Header title="Personal Finance" />
 
