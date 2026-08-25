@@ -1,19 +1,35 @@
 import {
-  LayoutGrid,
   Calendar,
   FolderOpen,
-  Search,
-  User,
-  Settings,
   HelpCircle,
+  LayoutGrid,
   LogOut,
   MoreHorizontal,
+  Search,
+  Settings,
+  User,
   X,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
+import logoCompleta from "../../assets/images/logo-completa-finquest.png";
 import logo from "../../assets/images/logo.png";
 
-const mobileSecondaryItems = [
+interface SidebarItem {
+  label: string;
+  icon: LucideIcon;
+  active?: boolean;
+  destructive?: boolean;
+}
+
+const primaryItems: SidebarItem[] = [
+  { label: "Dashboard", icon: LayoutGrid, active: true },
+  { label: "Calendário", icon: Calendar },
+  { label: "Arquivos", icon: FolderOpen },
+  { label: "Buscar", icon: Search },
+];
+
+const secondaryItems: SidebarItem[] = [
   { label: "Perfil", icon: User },
   { label: "Configurações", icon: Settings },
   { label: "Ajuda", icon: HelpCircle },
@@ -22,44 +38,60 @@ const mobileSecondaryItems = [
 
 export const Sidebar = () => {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+
+  const renderDesktopItems = (
+    items: SidebarItem[],
+  ) =>
+    items.map((item) => {
+      const Icon = item.icon;
+
+      return (
+        <li key={item.label} className="relative w-full">
+          {"active" in item && item.active && (
+            <div className="absolute -left-3 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-income shadow-[0_0_8px_#34d399]" />
+          )}
+          <a
+            href="#"
+            className={`flex h-11 w-full items-center rounded-lg transition-colors hover:bg-white/5 ${item.destructive ? "text-expense" : "text-white"} ${isSidebarExpanded ? "gap-3 px-3" : "justify-center"} ${"active" in item && item.active ? "bg-border-glass" : ""}`}
+          >
+            <Icon size={20} className="shrink-0" />
+            <span
+              className={`${isSidebarExpanded ? "w-auto opacity-100" : "w-0 opacity-0"} overflow-hidden whitespace-nowrap transition-all duration-300`}
+            >
+              {item.label}
+            </span>
+          </a>
+        </li>
+      );
+    });
 
   return (
     <>
-      <aside className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center bg-bg-sidebar px-2 py-2 text-white sm:static sm:h-screen sm:w-18 sm:max-w-18 sm:flex-col sm:justify-between sm:px-4 sm:py-3">
-        <div className="hidden sm:block">
-          <img
-            className="w-15 h-15 object-cover"
-            src={logo}
-            alt="Logo - FinQuest"
-          />
-        </div>
+      <aside
+        className={`${isSidebarExpanded ? "sm:w-72" : "sm:w-18"} fixed inset-x-0 bottom-0 z-30 flex h-16 items-center overflow-hidden bg-bg-sidebar px-2 py-2 text-white sm:inset-y-0 sm:left-0 sm:right-auto sm:h-screen sm:flex-col sm:px-3 sm:py-3 sm:transition-[width] sm:duration-300 sm:ease-in-out`}
+      >
+        <nav className="flex-1 sm:hidden">
+          <ul className="flex items-center justify-around">
+            {primaryItems.map((item) => {
+              const Icon = item.icon;
 
-        <nav className="flex-1 sm:flex-none">
-          <ul className="flex items-center justify-around sm:flex-col sm:gap-3">
-            <li className="relative flex h-10 w-10 items-center justify-center sm:h-auto sm:w-full">
-              <div className="absolute -left-4 hidden h-8 w-1 rounded-r-full bg-income shadow-[0_0_8px_#34d399] sm:block" />
-              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-border-glass">
-                <a href="#">
-                  <LayoutGrid size={20} />
-                </a>
-              </div>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <Calendar size={20} />
-              </a>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg ">
-              <a href="#">
-                <FolderOpen size={20} />
-              </a>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <Search size={20} />
-              </a>
-            </li>
-            <li className="flex h-10 w-10 items-center justify-center rounded-lg sm:hidden">
+              return (
+                <li key={item.label} className="relative flex h-10 w-10 items-center justify-center">
+                  {item.active && (
+                    <div className="absolute -bottom-2 h-1 w-8 rounded-t-full bg-income shadow-[0_0_8px_#34d399]" />
+                  )}
+                  <a
+                    href="#"
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${item.active ? "bg-border-glass" : ""}`}
+                    aria-label={item.label}
+                  >
+                    <Icon size={20} />
+                  </a>
+                </li>
+              );
+            })}
+            <li className="flex h-10 w-10 items-center justify-center">
               <button
                 className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
                 onClick={() => setIsMoreMenuOpen(true)}
@@ -71,74 +103,93 @@ export const Sidebar = () => {
           </ul>
         </nav>
 
-        <nav className="hidden sm:block">
-          <ul className="flex flex-col items-center gap-3">
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <User size={20} />
-              </a>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <Settings size={20} />
-              </a>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <HelpCircle size={20} />
-              </a>
-            </li>
-            <li className="w-10 h-10 flex items-center justify-center rounded-lg">
-              <a href="#">
-                <LogOut size={20} />
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <div className="hidden h-full w-full flex-col sm:flex">
+          <div className="mb-8 flex h-15 items-center justify-between">
+            {isSidebarExpanded ? (
+              <>
+                <img
+                  className="h-25 w-48 object-contain object-left"
+                  src={logoCompleta}
+                  alt="FinQuest"
+                />
+                <button
+                  className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
+                  onClick={() => setIsSidebarExpanded(false)}
+                  aria-label="Recolher menu lateral"
+                >
+                  <X size={20} />
+                </button>
+              </>
+            ) : (
+              <button
+                className="flex h-15 w-full items-center justify-center rounded-lg transition-colors hover:bg-white/5 cursor-pointer"
+                onClick={() => setIsSidebarExpanded(true)}
+                aria-label="Expandir menu lateral"
+              >
+                <img className="h-12 w-12 object-cover" src={logo} alt="FinQuest" />
+              </button>
+            )}
+          </div>
+
+          <nav className="flex flex-1 items-center">
+            <ul className="flex w-full flex-col gap-2">
+              {renderDesktopItems(primaryItems)}
+            </ul>
+          </nav>
+          <nav className="mt-auto">
+            <ul className="flex flex-col gap-2">{renderDesktopItems(secondaryItems)}</ul>
+          </nav>
+        </div>
       </aside>
+
+      <div
+        className={`${isSidebarExpanded ? "opacity-100" : "pointer-events-none opacity-0"} fixed inset-0 z-20 hidden bg-black/50 transition-opacity duration-300 sm:block`}
+        onClick={() => setIsSidebarExpanded(false)}
+        aria-hidden={!isSidebarExpanded}
+      />
 
       <div
         className={`${isMoreMenuOpen ? "opacity-100" : "pointer-events-none opacity-0"} fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 sm:hidden`}
         onClick={() => setIsMoreMenuOpen(false)}
       >
-          <div
-            className={`${isMoreMenuOpen ? "translate-y-0" : "translate-y-full"} absolute inset-x-0 bottom-0 rounded-t-2xl border border-border-glass bg-bg-card p-5 shadow-2xl transition-transform duration-300 ease-in-out`}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="more-options-title"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <h2 id="more-options-title" className="text-lg font-semibold">
-                Mais opções
-              </h2>
-              <button
-                className="rounded-lg p-1 text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
-                onClick={() => setIsMoreMenuOpen(false)}
-                aria-label="Fechar mais opções"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <ul className="flex flex-col gap-2">
-              {mobileSecondaryItems.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <li key={item.label}>
-                    <button
-                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-white/5 cursor-pointer ${item.destructive ? "text-expense" : "text-white"}`}
-                      onClick={() => setIsMoreMenuOpen(false)}
-                    >
-                      <Icon size={20} />
-                      {item.label}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+        <div
+          className={`${isMoreMenuOpen ? "translate-y-0" : "translate-y-full"} absolute inset-x-0 bottom-0 rounded-t-2xl border border-border-glass bg-bg-card p-5 shadow-2xl transition-transform duration-300 ease-in-out`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="more-options-title"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="mb-5 flex items-center justify-between">
+            <h2 id="more-options-title" className="text-lg font-semibold">
+              Mais opções
+            </h2>
+            <button
+              className="rounded-lg p-1 text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
+              onClick={() => setIsMoreMenuOpen(false)}
+              aria-label="Fechar mais opções"
+            >
+              <X size={20} />
+            </button>
           </div>
+          <ul className="flex flex-col gap-2">
+            {secondaryItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <li key={item.label}>
+                  <button
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-white/5 cursor-pointer ${item.destructive ? "text-expense" : "text-white"}`}
+                    onClick={() => setIsMoreMenuOpen(false)}
+                  >
+                    <Icon size={20} />
+                    {item.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
+      </div>
     </>
   );
 };
