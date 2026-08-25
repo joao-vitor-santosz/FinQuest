@@ -111,7 +111,7 @@ export const TransactionList = () => {
 
   return (
     <>
-      <div className="relative flex h-[28rem] flex-col justify-between overflow-hidden rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:h-auto sm:max-h-112.5 sm:p-6">
+      <div className="relative flex h-112 flex-col justify-between overflow-hidden rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:h-auto sm:max-h-112.5 sm:p-6">
         {/* Cabeçalho do Card */}
         <div className="flex items-center justify-between mb-4 shrink-0">
           <h3 className="text-2xl font-semibold text-white sm:text-3xl">Transações</h3>
