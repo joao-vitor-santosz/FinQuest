@@ -1,12 +1,14 @@
 import { ChevronDown, X } from "lucide-react";
 import { useTransactionForm } from "./add-transaction-form.schema";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 import type { TransactionFormData } from "./add-transaction-form.schema";
+import type { TransactionTypes } from "../../interfaces/transactions";
 
 interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  transaction?: TransactionTypes | null;
 }
 
 const paymentOptions = [
@@ -19,36 +21,62 @@ const paymentOptions = [
 export const AddTransactionModal = ({
   isOpen,
   onClose,
+  transaction = null,
 }: AddTransactionModalProps) => {
   const { register, handleSubmit, errors, setValue, watch, reset } =
     useTransactionForm();
-  const { handleAddTransaction } = useContext(TransactionContext);
+  const { handleAddTransaction, handleUpdateTransaction } =
+    useContext(TransactionContext);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    reset(
+      transaction ?? {
+        description: "",
+        amount: "",
+        type: "",
+        date: "",
+        paymentMethod: "",
+      },
+    );
+  }, [isOpen, reset, transaction]);
 
   const selectedType = watch("type");
   const selectedPayment = watch("paymentMethod");
   const selectedPaymentLabel =
     paymentOptions.find((option) => option.value === selectedPayment)?.label ?? "";
 
+  const handleClose = () => {
+    reset();
+    setIsPaymentOpen(false);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const onSubmit = (data: TransactionFormData) => {
-    handleAddTransaction(data);
-    reset();
-    onClose();
+    if (transaction) {
+      handleUpdateTransaction(transaction.id, data);
+    } else {
+      handleAddTransaction(data);
+    }
+    handleClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full h-[80vh] overflow-hidden overflow-y-auto  scrollbar-hide max-w-md p-6 rounded-2xl bg-bg-card/80 border border-border-glass backdrop-blur-md flex flex-col gap-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="flex max-h-[90vh] w-full max-w-md flex-col gap-6 overflow-y-auto scrollbar-hide rounded-2xl border border-border-glass bg-bg-card/80 p-4 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-200 sm:max-h-[80vh] sm:p-6">
         {/* Cabeçalho */}
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold text-white">Nova Transação</h3>
+          <h3 className="text-2xl font-semibold text-white">
+            {transaction ? "Editar Transação" : "Nova Transação"}
+          </h3>
           <button
-            onClick={() => {
-              reset();
-              onClose();
-            }}
+            onClick={handleClose}
             className="text-text-secondary hover:text-text-primary p-1 rounded-lg hover:bg-white/5 transition-all cursor-pointer"
           >
             <X size={20} />
@@ -222,13 +250,10 @@ export const AddTransactionModal = ({
           </div>
 
           {/* Botões de Ação */}
-          <div className="flex items-center gap-3 mt-4">
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              onClick={() => {
-                reset();
-                onClose();
-              }}
+              onClick={handleClose}
               className="flex-1 py-3 rounded-xl border border-border-glass/40 text-text-secondary font-medium transition-all hover:bg-white/5 cursor-pointer"
             >
               Cancelar
@@ -237,7 +262,7 @@ export const AddTransactionModal = ({
               type="submit"
               className="flex-1 py-3 rounded-xl bg-income text-bg-card font-semibold transition-all hover:opacity-90 shadow-[0_0_15px_rgba(52,211,153,0.3)] cursor-pointer"
             >
-              Adicionar
+              {transaction ? "Editar" : "Adicionar"}
             </button>
           </div>
         </form>

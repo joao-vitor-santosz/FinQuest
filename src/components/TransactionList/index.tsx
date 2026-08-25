@@ -4,11 +4,14 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   Check,
+  Pencil,
 } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 import { TransactionBottomSheet } from "../TransactionBottomSheet";
 import formatCurrency from "../../utils/format-currency";
+import { AddTransactionModal } from "../AddTransactionModal";
+import type { TransactionTypes } from "../../interfaces/transactions";
 
 interface SelectionCheckboxProps {
   checked: boolean;
@@ -43,6 +46,8 @@ const SelectionCheckbox = ({
 
 export const TransactionList = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [transactionBeingEdited, setTransactionBeingEdited] =
+    useState<TransactionTypes | null>(null);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false);
@@ -106,20 +111,20 @@ export const TransactionList = () => {
 
   return (
     <>
-      <div className="flex-1 p-6 max-h-112.5 overflow-hidden rounded-2xl bg-bg-card/40 border border-border-glass backdrop-blur-md flex flex-col justify-between">
+      <div className="relative flex h-[28rem] flex-col justify-between overflow-hidden rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:h-auto sm:max-h-112.5 sm:p-6">
         {/* Cabeçalho do Card */}
         <div className="flex items-center justify-between mb-4 shrink-0">
-          <h3 className="text-3xl font-semibold text-white">Transações</h3>
+          <h3 className="text-2xl font-semibold text-white sm:text-3xl">Transações</h3>
           {isDeleteMode ? (
-            <div className="animate-delete-selection-enter flex items-center gap-5">
+            <div className="animate-delete-selection-enter flex items-center gap-3 sm:gap-5">
               <button
-                className="text-lg font-medium text-text-secondary transition-colors hover:text-white cursor-pointer"
+                className="text-base font-medium text-text-secondary transition-colors hover:text-white sm:text-lg cursor-pointer"
                 onClick={handleCancelDelete}
               >
                 Cancelar
               </button>
               <button
-                className="text-lg font-semibold text-expense transition-colors hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                className="text-base font-semibold text-expense transition-colors hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-40 sm:text-lg cursor-pointer"
                 onClick={() => {
                   setIsDeletingAllVisible(areAllVisibleTransactionsSelected);
                   setHasConfirmedDeleteAll(false);
@@ -143,7 +148,7 @@ export const TransactionList = () => {
 
         {isDeleteMode && filteredTransactions.length > 0 && (
           <div className="mb-4 flex items-center justify-between rounded-xl border border-border-glass/30 bg-bg-sidebar/40 px-3 py-2 text-sm text-white">
-            <span className="text-[18px]">Excluir todas</span>
+            <span className="text-base sm:text-lg">Excluir todas</span>
             <SelectionCheckbox
               className="animate-delete-selection-enter"
               checked={areAllVisibleTransactionsSelected}
@@ -158,7 +163,7 @@ export const TransactionList = () => {
             Nenhuma transação encontrada.
           </div>
         )}
-        <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-hide pr-1">
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-8 pr-1 scrollbar-hide sm:pb-0">
           {filteredTransactions.map((transaction) => {
             const isIncome = transaction.type === "income";
             const Icon = isIncome ? ArrowUpRight : ArrowDownLeft;
@@ -169,20 +174,26 @@ export const TransactionList = () => {
             return (
               <ul
                 key={transaction.id}
-                className={`flex items-center justify-between p-3 rounded-xl bg-bg-sidebar/40 border transition-all shrink-0 border-border-glass/30 hover:border-border-glass`}
+                className="group relative flex items-center justify-between p-3 rounded-xl bg-bg-sidebar/40 border transition-all shrink-0 border-border-glass/30 hover:border-border-glass"
               >
                 {/* Lado Esquerdo: Ícone + Título/Data */}
-                <li className="flex items-center gap-4">
+                <li className="flex w-[calc(58%-1.5rem)] flex-none items-center gap-3 sm:w-[calc(50%-1.5rem)] sm:gap-4">
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconBg}`}
                   >
                     <Icon size={20} />
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-md font-medium text-white">
+                  <div className="flex min-w-0 flex-col">
+                    <span className="truncate text-sm font-medium text-white sm:text-md">
                       {transaction.description}
                     </span>
-                    <span className="text-sm text-text-secondary">
+                    <span className="truncate text-xs text-text-secondary sm:hidden">
+                      {transaction.date}
+                    </span>
+                    <span className="truncate text-xs text-text-secondary sm:hidden">
+                      {transaction.paymentMethod}
+                    </span>
+                    <span className="hidden truncate text-sm text-text-secondary sm:block">
                       {transaction.date} - {transaction.paymentMethod}
                     </span>
                   </div>
@@ -190,10 +201,19 @@ export const TransactionList = () => {
 
                 {/* Lado Direito: Valor */}
                 <span
-                  className={`text-lg font-semibold ${transaction.type === "income" ? "text-income" : "text-expense"}`}
+                  className={`ml-3 shrink-0 text-sm font-semibold sm:text-lg ${transaction.type === "income" ? "text-income" : "text-expense"}`}
                 >
                   {formatCurrency(transaction.amount)}
                 </span>
+                {!isDeleteMode && (
+                  <button
+                    className="absolute left-[58%] top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg p-1.5 text-text-secondary opacity-100 transition-all hover:bg-white/10 hover:text-white focus-visible:bg-white/10 focus-visible:text-white focus-visible:outline-none sm:left-1/2 sm:p-2 sm:pointer-events-none sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:opacity-100 sm:focus-visible:pointer-events-auto sm:focus-visible:opacity-100 cursor-pointer"
+                    onClick={() => setTransactionBeingEdited(transaction)}
+                    aria-label={`Editar ${transaction.description}`}
+                  >
+                    <Pencil size={18} />
+                  </button>
+                )}
                 {isDeleteMode && (
                   <SelectionCheckbox
                     checked={isSelected}
@@ -207,9 +227,8 @@ export const TransactionList = () => {
           })}
         </div>
 
-        {/* Seta para expandir no final (como no mockup) - flex-shrink-0 fixado */}
-        {filteredTransactions.length >= 5 && (
-          <div className="flex justify-center mt-3 shrink-0">
+        {filteredTransactions.length > 5 && (
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 justify-center sm:static sm:mt-3 sm:translate-x-0 sm:shrink-0">
             <button className="text-text-secondary hover:text-text-primary transition-all animate-bounce">
               <ChevronDown size={20} />
             </button>
@@ -223,6 +242,11 @@ export const TransactionList = () => {
           setIsBottomSheetOpen(false);
           setIsDeleteMode(true);
         }}
+      />
+      <AddTransactionModal
+        isOpen={transactionBeingEdited !== null}
+        transaction={transactionBeingEdited}
+        onClose={() => setTransactionBeingEdited(null)}
       />
       {isDeleteConfirmationOpen && (
         <div className="fixed inset-0 z-1000 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
@@ -283,7 +307,7 @@ export const TransactionList = () => {
       )}
       {deleteFeedback && (
         <div
-          className="animate-delete-feedback fixed bottom-6 right-6 z-1001 rounded-xl border border-income/30 bg-bg-card px-4 py-3 text-sm font-medium text-white shadow-2xl"
+          className="animate-delete-feedback fixed bottom-20 right-4 z-1001 rounded-xl border border-income/30 bg-bg-card px-4 py-3 text-sm font-medium text-white shadow-2xl sm:bottom-6 sm:right-6"
           role="status"
           aria-live="polite"
         >

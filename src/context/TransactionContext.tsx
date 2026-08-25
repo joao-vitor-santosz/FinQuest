@@ -11,6 +11,10 @@ interface TransactionContextData {
   expenseTotal: number;
   balanceTotal: number;
   handleAddTransaction: (data: Omit<TransactionTypes, "id">) => void;
+  handleUpdateTransaction: (
+    transactionId: string,
+    data: Omit<TransactionTypes, "id">,
+  ) => void;
   handleDeleteTransactions: (transactionIds: string[]) => void;
   filteredTransactions: TransactionTypes[];
   setTransactionType: (type: TransactionFilters["type"]) => void;
@@ -157,6 +161,17 @@ export const TransactionProvider = ({
     setTransactions([...transactions, newTransaction]);
   };
 
+  const handleUpdateTransaction = (
+    transactionId: string,
+    data: Omit<TransactionTypes, "id">,
+  ) => {
+    setTransactions((currentTransactions) =>
+      currentTransactions.map((transaction) =>
+        transaction.id === transactionId ? { ...transaction, ...data } : transaction,
+      ),
+    );
+  };
+
   const handleDeleteTransactions = (transactionIds: string[]) => {
     const idsToDelete = new Set(transactionIds);
     setTransactions((currentTransactions) =>
@@ -175,6 +190,7 @@ export const TransactionProvider = ({
         expenseTotal,
         balanceTotal,
         handleAddTransaction,
+        handleUpdateTransaction,
         handleDeleteTransactions,
         filteredTransactions,
         setTransactionType,
