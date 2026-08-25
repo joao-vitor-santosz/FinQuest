@@ -9,6 +9,7 @@ import { BottomPanelHeader } from "../bottomPanelHeader";
 
 interface CarouselOptionsProps {
   onClose: () => void;
+  onStartDelete: () => void;
   onNavigateToSort: () => void;
 }
 
@@ -21,6 +22,7 @@ const navigationItems = [
 
 export const CarouselOptions = ({
   onClose,
+  onStartDelete,
   onNavigateToSort,
 }: CarouselOptionsProps) => {
   return (
@@ -37,6 +39,11 @@ export const CarouselOptions = ({
                   if (item.label === "Filtros") {
                     e.preventDefault();
                     onNavigateToSort();
+                  }
+
+                  if (item.label === "Excluir") {
+                    e.preventDefault();
+                    onStartDelete();
                   }
                 }}
               >

@@ -5,11 +5,13 @@ import { Filters } from "../Filters";
 interface TransactionBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  onStartDelete: () => void;
 }
 
 export const TransactionBottomSheet = ({
   isOpen,
   onClose,
+  onStartDelete,
 }: TransactionBottomSheetProps) => {
   const [activeTab, setActiveTab] = useState<"main" | "sort">("main");
 
@@ -30,6 +32,7 @@ export const TransactionBottomSheet = ({
           <CarouselOptions
             onNavigateToSort={() => setActiveTab("sort")}
             onClose={onClose}
+            onStartDelete={onStartDelete}
           />
           <Filters onBack={() => setActiveTab("main")} />
         </div>
