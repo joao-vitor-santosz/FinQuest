@@ -283,7 +283,7 @@ export const TransactionList = () => {
       )}
       {deleteFeedback && (
         <div
-          className="fixed bottom-6 right-6 z-1001 rounded-xl border border-income/30 bg-bg-card px-4 py-3 text-sm font-medium text-white shadow-2xl"
+          className="animate-delete-feedback fixed bottom-6 right-6 z-1001 rounded-xl border border-income/30 bg-bg-card px-4 py-3 text-sm font-medium text-white shadow-2xl"
           role="status"
           aria-live="polite"
         >
