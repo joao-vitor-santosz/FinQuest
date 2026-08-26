@@ -13,12 +13,16 @@ interface TransactionCalendarProps {
   displayedDate: Date;
   onDisplayedDateChange: (date: Date) => void;
   transactions: TransactionTypes[];
+  selectedDay: number | null;
+  onDaySelect: (day: number) => void;
 }
 
 export const TransactionCalendar = ({
   displayedDate,
   onDisplayedDateChange,
   transactions,
+  selectedDay,
+  onDaySelect,
 }: TransactionCalendarProps) => {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -132,6 +136,12 @@ export const TransactionCalendar = ({
         </div>
       </div>
 
+      <p className="mb-4 rounded-xl border border-border-glass/70 bg-bg-sidebar/40 px-3 py-2 text-sm text-white">
+        {selectedDay === null
+          ? "Selecione um dia marcado para filtrar as movimentações daquele dia."
+          : `Exibindo as movimentações do dia ${selectedDay}.`}
+      </p>
+
       <div className="grid grid-cols-7 border-l border-t border-border-glass/70">
         {weekDays.map((weekDay) => (
           <div
@@ -143,6 +153,7 @@ export const TransactionCalendar = ({
         ))}
         {calendarDays.map((day, index) => {
           const dayTransactions = day ? transactionsByDay.get(day) ?? [] : [];
+          const isSelected = day === selectedDay;
           const hasIncome = dayTransactions.some(
             (transaction) => transaction.type === "income",
           );
@@ -153,14 +164,26 @@ export const TransactionCalendar = ({
           return (
             <div
               key={`${day}-${index}`}
-              className="relative flex aspect-square min-h-11 items-start justify-end border-b border-r border-border-glass/70 p-2 text-sm text-white sm:min-h-16 sm:p-3 sm:text-lg"
+              className={`relative flex aspect-square min-h-11 items-start justify-end border-b border-r border-border-glass/70 text-sm text-white sm:min-h-16 sm:text-lg ${isSelected ? "bg-balance/15" : ""}`}
             >
-              {day}
-              {day !== null && (hasIncome || hasExpense) && (
-                <div className="absolute bottom-2 left-2 flex gap-1 sm:bottom-3 sm:left-3">
-                  {hasIncome && <span className="h-2.5 w-2.5 rounded-full bg-income" />}
-                  {hasExpense && <span className="h-2.5 w-2.5 rounded-full bg-expense" />}
-                </div>
+              {day !== null && dayTransactions.length > 0 ? (
+                <button
+                  type="button"
+                  className="absolute inset-0 flex items-start justify-end p-2 text-right outline-none transition-colors hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-balance sm:p-3 cursor-pointer"
+                  onClick={() => onDaySelect(day)}
+                  aria-pressed={isSelected}
+                  aria-label={`Filtrar movimentações do dia ${day}`}
+                >
+                  {day}
+                  {(hasIncome || hasExpense) && (
+                    <span className="absolute bottom-2 left-2 flex gap-1 sm:bottom-3 sm:left-3">
+                      {hasIncome && <span className="h-2.5 w-2.5 rounded-full bg-income" />}
+                      {hasExpense && <span className="h-2.5 w-2.5 rounded-full bg-expense" />}
+                    </span>
+                  )}
+                </button>
+              ) : (
+                <span className="p-2 sm:p-3">{day}</span>
               )}
             </div>
           );
