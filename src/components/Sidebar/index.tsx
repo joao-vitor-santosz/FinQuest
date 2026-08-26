@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import logoCompleta from "../../assets/images/logo-completa-finquest.png";
 import logo from "../../assets/images/logo.png";
@@ -18,13 +19,13 @@ import logo from "../../assets/images/logo.png";
 interface SidebarItem {
   label: string;
   icon: LucideIcon;
-  active?: boolean;
+  href?: "/" | "/calendar";
   destructive?: boolean;
 }
 
 const primaryItems: SidebarItem[] = [
-  { label: "Dashboard", icon: LayoutGrid, active: true },
-  { label: "Calendário", icon: Calendar },
+  { label: "Dashboard", icon: LayoutGrid, href: "/" },
+  { label: "Calendário", icon: Calendar, href: "/calendar" },
   { label: "Arquivos", icon: FolderOpen },
   { label: "Buscar", icon: Search },
 ];
@@ -39,29 +40,46 @@ const secondaryItems: SidebarItem[] = [
 export const Sidebar = () => {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const currentPath = useRouterState({
+    select: (state) => state.location.pathname,
+  });
 
   const renderDesktopItems = (
     items: SidebarItem[],
   ) =>
     items.map((item) => {
       const Icon = item.icon;
+      const isActive = item.href === currentPath;
+      const itemClassName = `flex h-11 w-full items-center rounded-lg transition-colors hover:bg-white/5 ${item.destructive ? "text-expense" : "text-white"} ${isSidebarExpanded ? "gap-3 px-3" : "justify-center"} ${isActive ? "bg-border-glass" : ""}`;
 
       return (
         <li key={item.label} className="relative w-full">
-          {"active" in item && item.active && (
+          {isActive && (
             <div className="absolute -left-3 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-income shadow-[0_0_8px_#34d399]" />
           )}
-          <a
-            href="#"
-            className={`flex h-11 w-full items-center rounded-lg transition-colors hover:bg-white/5 ${item.destructive ? "text-expense" : "text-white"} ${isSidebarExpanded ? "gap-3 px-3" : "justify-center"} ${"active" in item && item.active ? "bg-border-glass" : ""}`}
-          >
-            <Icon size={20} className="shrink-0" />
-            <span
-              className={`${isSidebarExpanded ? "w-auto opacity-100" : "w-0 opacity-0"} overflow-hidden whitespace-nowrap transition-all duration-300`}
+          {item.href ? (
+            <Link
+              to={item.href}
+              className={itemClassName}
+              onClick={() => setIsSidebarExpanded(false)}
             >
-              {item.label}
-            </span>
-          </a>
+              <Icon size={20} className="shrink-0" />
+              <span
+                className={`${isSidebarExpanded ? "w-auto opacity-100" : "w-0 opacity-0"} overflow-hidden whitespace-nowrap transition-all duration-300`}
+              >
+                {item.label}
+              </span>
+            </Link>
+          ) : (
+            <button type="button" className={itemClassName}>
+              <Icon size={20} className="shrink-0" />
+              <span
+                className={`${isSidebarExpanded ? "w-auto opacity-100" : "w-0 opacity-0"} overflow-hidden whitespace-nowrap transition-all duration-300`}
+              >
+                {item.label}
+              </span>
+            </button>
+          )}
         </li>
       );
     });
@@ -75,19 +93,30 @@ export const Sidebar = () => {
           <ul className="flex items-center justify-around">
             {primaryItems.map((item) => {
               const Icon = item.icon;
+              const isActive = item.href === currentPath;
 
               return (
                 <li key={item.label} className="relative flex h-10 w-10 items-center justify-center">
-                  {item.active && (
+                  {isActive && (
                     <div className="absolute -bottom-2 h-1 w-8 rounded-t-full bg-income shadow-[0_0_8px_#34d399]" />
                   )}
-                  <a
-                    href="#"
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${item.active ? "bg-border-glass" : ""}`}
-                    aria-label={item.label}
-                  >
-                    <Icon size={20} />
-                  </a>
+                  {item.href ? (
+                    <Link
+                      to={item.href}
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${isActive ? "bg-border-glass" : ""}`}
+                      aria-label={item.label}
+                    >
+                      <Icon size={20} />
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg"
+                      aria-label={item.label}
+                    >
+                      <Icon size={20} />
+                    </button>
+                  )}
                 </li>
               );
             })}
