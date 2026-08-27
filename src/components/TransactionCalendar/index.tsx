@@ -15,6 +15,8 @@ interface TransactionCalendarProps {
   transactions: TransactionTypes[];
   selectedDay: number | null;
   onDaySelect: (day: number) => void;
+  className?: string;
+  animationDelay?: string;
 }
 
 export const TransactionCalendar = ({
@@ -23,6 +25,8 @@ export const TransactionCalendar = ({
   transactions,
   selectedDay,
   onDaySelect,
+  className = "",
+  animationDelay,
 }: TransactionCalendarProps) => {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -69,7 +73,10 @@ export const TransactionCalendar = ({
   };
 
   return (
-    <section className="rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:p-6">
+    <section
+      className={`rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:p-6 ${className}`}
+      style={{ animationDelay }}
+    >
       <div className="mb-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="capitalize text-2xl font-semibold text-white sm:text-3xl">
           {monthLabel}

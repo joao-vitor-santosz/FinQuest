@@ -45,7 +45,10 @@ export const CalendarPage = () => {
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div>
+        <div
+          className="animate-page-content-enter"
+          style={{ animationDelay: "80ms" }}
+        >
           <h1 className="text-2xl font-semibold text-white sm:text-3xl">
             Calendário
           </h1>
@@ -54,6 +57,8 @@ export const CalendarPage = () => {
           </p>
         </div>
         <TransactionHistoryFilters
+          className="animate-page-content-enter"
+          animationDelay="140ms"
           value={transactionFilter}
           onChange={setTransactionFilter}
           selectedDay={selectedDay}
@@ -62,13 +67,19 @@ export const CalendarPage = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-6">
         <TransactionCalendar
+          className="animate-page-content-enter"
+          animationDelay="200ms"
           displayedDate={displayedDate}
           onDisplayedDateChange={handleDisplayedDateChange}
           transactions={filteredMonthTransactions}
           selectedDay={selectedDay}
           onDaySelect={handleDaySelect}
         />
-        <TransactionEventList transactions={visibleTransactions} />
+        <TransactionEventList
+          className="animate-page-content-enter"
+          animationDelay="260ms"
+          transactions={visibleTransactions}
+        />
       </div>
     </div>
   );

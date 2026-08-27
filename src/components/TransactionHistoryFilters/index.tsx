@@ -5,6 +5,8 @@ interface TransactionHistoryFiltersProps {
   onChange: (value: CalendarTransactionFilter) => void;
   selectedDay: number | null;
   onClearSelectedDay: () => void;
+  className?: string;
+  animationDelay?: string;
 }
 
 export const TransactionHistoryFilters = ({
@@ -12,8 +14,13 @@ export const TransactionHistoryFilters = ({
   onChange,
   selectedDay,
   onClearSelectedDay,
+  className = "",
+  animationDelay,
 }: TransactionHistoryFiltersProps) => (
-  <div className="flex max-w-full flex-col items-start overflow-x-hidden text-sm text-text-secondary sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+  <div
+    className={`flex max-w-full flex-col items-start overflow-x-hidden text-sm text-text-secondary sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 ${className}`}
+    style={{ animationDelay }}
+  >
     <label className="flex items-center gap-3">
       Exibir
       <select
