@@ -43,6 +43,9 @@ export const Sidebar = () => {
   const currentPath = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const activePrimaryIndex = primaryItems.findIndex(
+    (item) => item.href === currentPath,
+  );
 
   const renderDesktopItems = (
     items: SidebarItem[],
@@ -54,9 +57,6 @@ export const Sidebar = () => {
 
       return (
         <li key={item.label} className="relative w-full">
-          {isActive && (
-            <div className="absolute -left-3 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-income shadow-[0_0_8px_#34d399]" />
-          )}
           {item.href ? (
             <Link
               to={item.href}
@@ -90,16 +90,20 @@ export const Sidebar = () => {
         className={`${isSidebarExpanded ? "sm:w-72" : "sm:w-18"} fixed inset-x-0 bottom-0 z-30 flex h-16 items-center overflow-hidden bg-bg-sidebar px-2 py-2 text-white sm:inset-y-0 sm:left-0 sm:right-auto sm:h-screen sm:flex-col sm:px-3 sm:py-3 sm:transition-[width] sm:duration-300 sm:ease-in-out`}
       >
         <nav className="flex-1 sm:hidden">
-          <ul className="flex items-center justify-around">
+          <ul className="relative grid grid-cols-5 items-center">
+            <li
+              aria-hidden="true"
+              className={`${activePrimaryIndex === -1 ? "opacity-0" : "opacity-100"} pointer-events-none absolute -bottom-2 h-1 w-8 rounded-t-full bg-income shadow-[0_0_8px_#34d399] transition-[left,opacity] duration-300 ease-in-out`}
+              style={{
+                left: `calc(${activePrimaryIndex * 20 + 10}% - 1rem)`,
+              }}
+            />
             {primaryItems.map((item) => {
               const Icon = item.icon;
               const isActive = item.href === currentPath;
 
               return (
-                <li key={item.label} className="relative flex h-10 w-10 items-center justify-center">
-                  {isActive && (
-                    <div className="absolute -bottom-2 h-1 w-8 rounded-t-full bg-income shadow-[0_0_8px_#34d399]" />
-                  )}
+                <li key={item.label} className="relative flex h-10 w-10 items-center justify-center justify-self-center">
                   {item.href ? (
                     <Link
                       to={item.href}
@@ -120,7 +124,7 @@ export const Sidebar = () => {
                 </li>
               );
             })}
-            <li className="flex h-10 w-10 items-center justify-center">
+            <li className="flex h-10 w-10 items-center justify-center justify-self-center">
               <button
                 className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
                 onClick={() => setIsMoreMenuOpen(true)}
@@ -161,7 +165,14 @@ export const Sidebar = () => {
           </div>
 
           <nav className="flex flex-1 items-center">
-            <ul className="flex w-full flex-col gap-2">
+            <ul className="relative flex w-full flex-col gap-2">
+              <li
+                aria-hidden="true"
+                className={`${activePrimaryIndex === -1 ? "opacity-0" : "opacity-100"} pointer-events-none absolute -left-3 top-1.5 h-8 w-1 rounded-r-full bg-income shadow-[0_0_8px_#34d399] transition-[transform,opacity] duration-300 ease-in-out`}
+                style={{
+                  transform: `translateY(${activePrimaryIndex * 52}px)`,
+                }}
+              />
               {renderDesktopItems(primaryItems)}
             </ul>
           </nav>

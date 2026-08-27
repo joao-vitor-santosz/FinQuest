@@ -28,7 +28,7 @@ export const TransactionEventList = ({
               className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${transaction.type === "income" ? "bg-income" : "bg-expense"}`}
             />
             <div className="min-w-0">
-              <p className="line-clamp-3 font-medium text-white">
+              <p className="line-clamp-3 sm:line-clamp-2 font-medium text-white">
                 {transaction.description}
               </p>
               <p className="mt-0.5 text-sm text-text-secondary">

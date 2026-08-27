@@ -44,7 +44,7 @@ export const CalendarPage = () => {
 
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-white sm:text-3xl">
             Calendário
