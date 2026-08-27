@@ -20,6 +20,11 @@ interface SelectionCheckboxProps {
   className?: string;
 }
 
+interface TransactionListProps {
+  className?: string;
+  animationDelay?: string;
+}
+
 const SelectionCheckbox = ({
   checked,
   onChange,
@@ -44,7 +49,10 @@ const SelectionCheckbox = ({
   </label>
 );
 
-export const TransactionList = () => {
+export const TransactionList = ({
+  className = "",
+  animationDelay,
+}: TransactionListProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [transactionBeingEdited, setTransactionBeingEdited] =
     useState<TransactionTypes | null>(null);
@@ -111,7 +119,10 @@ export const TransactionList = () => {
 
   return (
     <>
-      <div className="relative flex h-112 flex-col justify-between overflow-hidden rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:h-auto sm:max-h-112.5 sm:p-6">
+      <div
+        className={`relative flex h-112 flex-col justify-between overflow-hidden rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:h-auto sm:max-h-112.5 sm:p-6 ${className}`}
+        style={{ animationDelay }}
+      >
         {/* Cabeçalho do Card */}
         <div className="flex items-center justify-between mb-4 shrink-0">
           <h3 className="text-2xl font-semibold text-white sm:text-3xl">Transações</h3>

@@ -5,9 +5,18 @@ interface MetricCardProps {
   value: string;
   icon: LucideIcon;
   type: "income" | "expense" | "balance";
+  className?: string;
+  animationDelay?: string;
 }
 
-export const MetricCard = ({ title, value, icon: Icon, type }: MetricCardProps) => {
+export const MetricCard = ({
+  title,
+  value,
+  icon: Icon,
+  type,
+  className = "",
+  animationDelay,
+}: MetricCardProps) => {
   // Define as cores e sombras dinamicamente com base no tipo do card
   const cardStyles = {
     income: {
@@ -33,7 +42,10 @@ export const MetricCard = ({ title, value, icon: Icon, type }: MetricCardProps) 
   const currentStyle = cardStyles[type];
 
   return (
-    <div className={`flex min-w-0 flex-col gap-4 rounded-2xl border bg-bg-card/40 p-4 backdrop-blur-md transition-all hover:scale-[1.01] sm:p-6 ${currentStyle.borderColor} ${currentStyle.shadowColor}`}>
+    <div
+      className={`flex min-w-0 flex-col gap-4 rounded-2xl border bg-bg-card/40 p-4 backdrop-blur-md transition-all hover:scale-[1.01] sm:p-6 ${currentStyle.borderColor} ${currentStyle.shadowColor} ${className}`}
+      style={{ animationDelay }}
+    >
       
       {/* Linha Superior: Título e Ícone de Status */}
       <div className="flex items-center justify-between">

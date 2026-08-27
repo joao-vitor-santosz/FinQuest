@@ -2,7 +2,15 @@ import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { useContext } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 
-export const CategoryChart = () => {
+interface CategoryChartProps {
+  className?: string;
+  animationDelay?: string;
+}
+
+export const CategoryChart = ({
+  className = "",
+  animationDelay,
+}: CategoryChartProps) => {
   const { incomeTotal, expenseTotal } = useContext(TransactionContext);
 
   const currentChartData = [
@@ -11,7 +19,10 @@ export const CategoryChart = () => {
   ];
 
   return (
-    <div className="flex w-full flex-1 flex-col justify-between rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:max-h-112.5 sm:p-6">
+    <div
+      className={`flex w-full flex-1 flex-col justify-between rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:max-h-112.5 sm:p-6 ${className}`}
+      style={{ animationDelay }}
+    >
       {/* Título do Card */}
       <div className="mb-4">
           <h3 className="text-2xl font-semibold text-white sm:text-3xl">Categorias</h3>
