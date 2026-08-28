@@ -7,9 +7,12 @@ const paymentMethodLabels: Record<TransactionTypes["paymentMethod"], string> = {
   credito: "Crédito",
 };
 
-const escapeCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+const escapeCsvValue = (value: string) => {
+  const safeValue = /^[\t\r ]*[=+\-@]/.test(value) ? `'${value}` : value;
+  return `"${safeValue.replace(/"/g, '""')}"`;
+};
 
-export const exportTransactionsToCsv = (
+export const createTransactionsCsvBlob = (
   transactions: TransactionTypes[],
 ) => {
   const header = ["Descrição", "Tipo", "Valor", "Data", "Método de pagamento"];
@@ -23,16 +26,36 @@ export const exportTransactionsToCsv = (
   const csvContent = [header, ...rows]
     .map((row) => row.map(escapeCsvValue).join(";"))
     .join("\r\n");
-  const blob = new Blob(["\uFEFF", csvContent], {
+  return new Blob(["\uFEFF", csvContent], {
     type: "text/csv;charset=utf-8;",
   });
+};
+
+export const getTransactionsCsvFileName = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `transacoes-${year}-${month}-${day}.csv`;
+};
+
+export const downloadBlob = (blob: Blob, fileName: string) => {
   const downloadUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
 
   link.href = downloadUrl;
-  link.download = `transacoes-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = fileName;
   document.body.appendChild(link);
   link.click();
   link.remove();
-  URL.revokeObjectURL(downloadUrl);
+  window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 0);
+};
+
+export const exportTransactionsToCsv = (
+  transactions: TransactionTypes[],
+) => {
+  downloadBlob(
+    createTransactionsCsvBlob(transactions),
+    getTransactionsCsvFileName(),
+  );
 };

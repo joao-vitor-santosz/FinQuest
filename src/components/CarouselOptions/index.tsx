@@ -6,9 +6,11 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useContext } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { BottomPanelHeader } from "../bottomPanelHeader";
 import { TransactionContext } from "../../context/TransactionContext";
-import { exportTransactionsToCsv } from "../../utils/export-transactions-csv";
+import { ArchiveContext } from "../../context/archive-context";
+import { downloadBlob } from "../../utils/export-transactions-csv";
 
 interface CarouselOptionsProps {
   onClose: () => void;
@@ -29,6 +31,8 @@ export const CarouselOptions = ({
   onNavigateToSort,
 }: CarouselOptionsProps) => {
   const { filteredTransactions } = useContext(TransactionContext);
+  const { createTransactionExport } = useContext(ArchiveContext);
+  const navigate = useNavigate();
 
   return (
     <nav className="w-1/2 h-full flex flex-col justify-between py-7 px-5">
@@ -51,9 +55,20 @@ export const CarouselOptions = ({
                     onStartDelete();
                   }
 
+                  if (item.label === "Ver histórico completo") {
+                    e.preventDefault();
+                    onClose();
+                    void navigate({
+                      to: "/files",
+                      search: { tab: "transactions" },
+                    });
+                  }
+
                   if (item.label === "Exportar dados CSV") {
                     e.preventDefault();
-                    exportTransactionsToCsv(filteredTransactions);
+                    const exportRecord =
+                      createTransactionExport(filteredTransactions);
+                    downloadBlob(exportRecord.blob, exportRecord.name);
                     onClose();
                   }
                 }}

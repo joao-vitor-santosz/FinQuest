@@ -6,12 +6,14 @@ import {
   Check,
   Pencil,
 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 import { TransactionBottomSheet } from "../TransactionBottomSheet";
 import formatCurrency from "../../utils/format-currency";
 import { AddTransactionModal } from "../AddTransactionModal";
 import type { TransactionTypes } from "../../interfaces/transactions";
+import { ActionFeedback } from "../ActionFeedback";
+import { ConfirmationModal } from "../ConfirmationModal";
 
 interface SelectionCheckboxProps {
   checked: boolean;
@@ -108,14 +110,11 @@ export const TransactionList = ({
     );
   };
 
-  useEffect(() => {
-    if (deleteFeedback === null) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => setDeleteFeedback(null), 4000);
-    return () => window.clearTimeout(timeout);
-  }, [deleteFeedback]);
+  const handleCloseDeleteConfirmation = () => {
+    setHasConfirmedDeleteAll(false);
+    setIsDeletingAllVisible(false);
+    setIsDeleteConfirmationOpen(false);
+  };
 
   return (
     <>
@@ -259,72 +258,37 @@ export const TransactionList = ({
         transaction={transactionBeingEdited}
         onClose={() => setTransactionBeingEdited(null)}
       />
-      {isDeleteConfirmationOpen && (
-        <div className="fixed inset-0 z-1000 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div
-            className="w-full max-w-sm rounded-2xl border border-border-glass bg-bg-card p-6 shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delete-confirmation-title"
-            aria-describedby="delete-confirmation-description"
-          >
-            <h2
-              id="delete-confirmation-title"
-              className="text-xl font-semibold text-white"
-            >
-              Confirmar exclusão
-            </h2>
-            <p
-              id="delete-confirmation-description"
-              className="mt-3 text-text-secondary"
-            >
-              {selectedTransactionIds.length === 1
-                ? "Esta transação será excluída permanentemente."
-                : `${selectedTransactionIds.length} transações serão excluídas permanentemente.`}
-            </p>
-            {isDeletingAllVisible && (
-              <div className="mt-5 flex items-center gap-3 rounded-xl border border-expense/30 bg-expense/10 p-3 text-sm text-white">
-                <SelectionCheckbox
-                  checked={hasConfirmedDeleteAll}
-                  onChange={() => setHasConfirmedDeleteAll((current) => !current)}
-                  label="Confirmar exclusão de todas as transações exibidas"
-                />
-                <span>
-                  Entendo que todas as transações exibidas serão excluídas e a
-                  ação não poderá ser desfeita.
-                </span>
-              </div>
-            )}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                className="rounded-xl px-4 py-2 font-medium text-text-secondary transition-colors hover:bg-white/5 hover:text-white cursor-pointer"
-                onClick={() => {
-                  setHasConfirmedDeleteAll(false);
-                  setIsDeleteConfirmationOpen(false);
-                }}
-              >
-                Voltar
-              </button>
-              <button
-                className="rounded-xl bg-expense px-4 py-2 font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
-                onClick={handleConfirmDelete}
-                disabled={isDeletingAllVisible && !hasConfirmedDeleteAll}
-              >
-                Excluir
-              </button>
-            </div>
+      <ConfirmationModal
+        isOpen={isDeleteConfirmationOpen}
+        title="Confirmar exclusão"
+        description={
+          selectedTransactionIds.length === 1
+            ? "Esta transação será excluída permanentemente."
+            : `${selectedTransactionIds.length} transações serão excluídas permanentemente.`
+        }
+        confirmLabel="Excluir"
+        confirmDisabled={isDeletingAllVisible && !hasConfirmedDeleteAll}
+        onCancel={handleCloseDeleteConfirmation}
+        onConfirm={handleConfirmDelete}
+      >
+        {isDeletingAllVisible && (
+          <div className="mt-5 flex items-center gap-3 rounded-xl border border-expense/30 bg-expense/10 p-3 text-sm text-white">
+            <SelectionCheckbox
+              checked={hasConfirmedDeleteAll}
+              onChange={() => setHasConfirmedDeleteAll((current) => !current)}
+              label="Confirmar exclusão de todas as transações exibidas"
+            />
+            <span>
+              Entendo que todas as transações exibidas serão excluídas e a ação
+              não poderá ser desfeita.
+            </span>
           </div>
-        </div>
-      )}
-      {deleteFeedback && (
-        <div
-          className="animate-delete-feedback fixed bottom-20 right-4 z-1001 rounded-xl border border-income/30 bg-bg-card px-4 py-3 text-sm font-medium text-white shadow-2xl sm:bottom-6 sm:right-6"
-          role="status"
-          aria-live="polite"
-        >
-          {deleteFeedback}
-        </div>
-      )}
+        )}
+      </ConfirmationModal>
+      <ActionFeedback
+        message={deleteFeedback}
+        onDismiss={() => setDeleteFeedback(null)}
+      />
     </>
   );
 };

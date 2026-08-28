@@ -19,14 +19,14 @@ import logo from "../../assets/images/logo.png";
 interface SidebarItem {
   label: string;
   icon: LucideIcon;
-  href?: "/" | "/calendar";
+  href?: "/" | "/calendar" | "/files";
   destructive?: boolean;
 }
 
 const primaryItems: SidebarItem[] = [
   { label: "Dashboard", icon: LayoutGrid, href: "/" },
   { label: "Calendário", icon: Calendar, href: "/calendar" },
-  { label: "Arquivos", icon: FolderOpen },
+  { label: "Arquivos", icon: FolderOpen, href: "/files" },
   { label: "Buscar", icon: Search },
 ];
 

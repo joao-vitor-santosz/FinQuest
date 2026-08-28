@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './pages/__root'
 import { Route as AppLayoutRouteImport } from './pages/_app/layout'
 import { Route as AppIndexRouteImport } from './pages/_app/index'
 import { Route as AppCalendarRouteImport } from './pages/_app/calendar'
+import { Route as AppFilesRouteImport } from './pages/_app/files'
 
 const AppLayoutRoute = AppLayoutRouteImport.update({
   id: '/_app',
@@ -27,27 +28,35 @@ const AppCalendarRoute = AppCalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => AppLayoutRoute,
 } as any)
+const AppFilesRoute = AppFilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/calendar': typeof AppCalendarRoute
+  '/files': typeof AppFilesRoute
 }
 export interface FileRoutesByTo {
   '/calendar': typeof AppCalendarRoute
+  '/files': typeof AppFilesRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppLayoutRouteWithChildren
   '/_app/calendar': typeof AppCalendarRoute
+  '/_app/files': typeof AppFilesRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar'
+  fullPaths: '/' | '/calendar' | '/files'
   fileRoutesByTo: FileRoutesByTo
-  to: '/calendar' | '/'
-  id: '__root__' | '/_app' | '/_app/calendar' | '/_app/'
+  to: '/calendar' | '/files' | '/'
+  id: '__root__' | '/_app' | '/_app/calendar' | '/_app/files' | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,16 +86,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCalendarRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/_app/files': {
+      id: '/_app/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof AppFilesRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
   }
 }
 
 interface AppLayoutRouteChildren {
   AppCalendarRoute: typeof AppCalendarRoute
+  AppFilesRoute: typeof AppFilesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppCalendarRoute: AppCalendarRoute,
+  AppFilesRoute: AppFilesRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

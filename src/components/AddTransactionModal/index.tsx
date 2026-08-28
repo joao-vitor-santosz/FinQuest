@@ -1,6 +1,6 @@
 import { ChevronDown, X } from "lucide-react";
 import { useTransactionForm } from "./add-transaction-form.schema";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { TransactionContext } from "../../context/TransactionContext";
 import type { TransactionFormData } from "./add-transaction-form.schema";
 import type { TransactionTypes } from "../../interfaces/transactions";
@@ -28,6 +28,7 @@ export const AddTransactionModal = ({
   const { handleAddTransaction, handleUpdateTransaction } =
     useContext(TransactionContext);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -44,6 +45,17 @@ export const AddTransactionModal = ({
       },
     );
   }, [isOpen, reset, transaction]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previouslyFocusedElement = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+
+    return () => previouslyFocusedElement?.focus();
+  }, [isOpen]);
 
   const selectedType = watch("type");
   const selectedPayment = watch("paymentMethod");
@@ -69,15 +81,51 @@ export const AddTransactionModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="flex max-h-[90vh] w-full max-w-md flex-col gap-6 overflow-y-auto scrollbar-hide rounded-2xl border border-border-glass bg-bg-card/80 p-4 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-200 sm:max-h-[80vh] sm:p-6">
+      <div
+        className="flex max-h-[90vh] w-full max-w-md flex-col gap-6 overflow-y-auto scrollbar-hide rounded-2xl border border-border-glass bg-bg-card/80 p-4 shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-200 sm:max-h-[80vh] sm:p-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="transaction-modal-title"
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            handleClose();
+            return;
+          }
+
+          if (event.key !== "Tab") {
+            return;
+          }
+
+          const focusableElements = Array.from(
+            event.currentTarget.querySelectorAll<HTMLElement>(
+              'button:not([disabled]), input:not([disabled]), select:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+            ),
+          );
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements.at(-1);
+
+          if (event.shiftKey && document.activeElement === firstElement) {
+            event.preventDefault();
+            lastElement?.focus();
+          } else if (!event.shiftKey && document.activeElement === lastElement) {
+            event.preventDefault();
+            firstElement?.focus();
+          }
+        }}
+      >
         {/* Cabeçalho */}
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold text-white">
+          <h3
+            id="transaction-modal-title"
+            className="text-2xl font-semibold text-white"
+          >
             {transaction ? "Editar Transação" : "Nova Transação"}
           </h3>
           <button
+            ref={closeButtonRef}
             onClick={handleClose}
             className="text-text-secondary hover:text-text-primary p-1 rounded-lg hover:bg-white/5 transition-all cursor-pointer"
+            aria-label="Fechar modal de transação"
           >
             <X size={20} />
           </button>
