@@ -1,5 +1,5 @@
 import { FileSpreadsheet, FolderOpen, Plus, Upload } from "lucide-react";
-import { type FilesPageHeaderProps, actionClassName } from "./index";
+import { type FilesPageHeaderProps, actionClassName } from "./types/index";
 
 
 export const FilesPageHeader = ({

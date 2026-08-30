@@ -1,4 +1,4 @@
-import type { FilesTab } from "../types";
+import type { FilesTab } from "../../types";
 
 export interface FilesPageHeaderProps {
   activeTab: FilesTab;
