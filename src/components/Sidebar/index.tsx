@@ -5,9 +5,9 @@ import {
   LayoutGrid,
   LogOut,
   MoreHorizontal,
-  Search,
   Settings,
   User,
+  WalletCards,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -19,7 +19,7 @@ import logo from "../../assets/images/logo.png";
 interface SidebarItem {
   label: string;
   icon: LucideIcon;
-  href?: "/" | "/calendar" | "/files";
+  href?: "/" | "/calendar" | "/files" | "/bills";
   destructive?: boolean;
 }
 
@@ -27,7 +27,7 @@ const primaryItems: SidebarItem[] = [
   { label: "Dashboard", icon: LayoutGrid, href: "/" },
   { label: "Calendário", icon: Calendar, href: "/calendar" },
   { label: "Arquivos", icon: FolderOpen, href: "/files" },
-  { label: "Buscar", icon: Search },
+  { label: "Contas", icon: WalletCards, href: "/bills" },
 ];
 
 const secondaryItems: SidebarItem[] = [
