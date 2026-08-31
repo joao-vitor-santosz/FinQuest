@@ -1,18 +1,8 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
-import type { Bill, BillInput, BillStatus } from "../interfaces/bills";
+import type { Bill, BillInput } from "../interfaces/bills";
+import { getBillStatusForDueDate } from "../utils/bill-status";
 import { BillsContext } from "./bills-context";
-
-const getBillStatus = (dueDate: string): BillStatus => {
-  const today = new Date();
-  const todayAsIsoDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0"),
-  ].join("-");
-
-  return dueDate < todayAsIsoDate ? "overdue" : "pending";
-};
 
 export const BillsProvider = ({ children }: { children: ReactNode }) => {
   const [bills, setBills] = useState<Bill[]>([]);
@@ -21,7 +11,7 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
     const bill: Bill = {
       ...data,
       id: crypto.randomUUID(),
-      status: getBillStatus(data.dueDate),
+      status: getBillStatusForDueDate(data.dueDate),
     };
 
     setBills((currentBills) => [...currentBills, bill]);
@@ -31,7 +21,7 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
     setBills((currentBills) =>
       currentBills.map((bill) =>
         bill.id === billId
-          ? { ...bill, ...data, status: getBillStatus(data.dueDate) }
+          ? { ...bill, ...data, status: getBillStatusForDueDate(data.dueDate) }
           : bill,
       ),
     );

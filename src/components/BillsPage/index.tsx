@@ -2,12 +2,14 @@ import { Plus, WalletCards } from "lucide-react";
 import { ActionFeedback } from "../ActionFeedback";
 import { ConfirmationModal } from "../ConfirmationModal";
 import { BillFormModal } from "./BillFormModal";
+import { BillDetails } from "./BillDetails";
+import { BillsFilters } from "./BillsFilters";
 import { BillsList } from "./BillsList";
 import { summaryCards } from "./types";
 import { useBillsPage } from "./useBillsPage";
 
 export const BillsPage = () => {
-  const { data, state, actions } = useBillsPage();
+  const { data, state, actions, detailPanelRef } = useBillsPage();
 
   return (
     <div className="flex w-full flex-col gap-4 sm:gap-6">
@@ -67,11 +69,27 @@ export const BillsPage = () => {
         )}
       </div>
 
-      <BillsList
-        bills={data.bills}
-        onEdit={actions.openEditBillForm}
-        onDelete={actions.requestBillDeletion}
+      <BillsFilters
+        filters={state.filters}
+        categories={data.categories}
+        onChange={actions.setFilters}
       />
+
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-6">
+        <BillsList
+          bills={data.filteredBills}
+          selectedBillId={data.selectedBill?.id ?? null}
+          hasActiveFilters={actions.hasActiveFilters}
+          onSelect={actions.selectBill}
+        />
+        <div ref={detailPanelRef}>
+          <BillDetails
+            bill={data.selectedBill}
+            onEdit={actions.openEditBillForm}
+            onDelete={actions.requestBillDeletion}
+          />
+        </div>
+      </div>
 
       <BillFormModal
         key={`${state.isBillFormOpen}-${state.billBeingEdited?.id ?? "new"}`}

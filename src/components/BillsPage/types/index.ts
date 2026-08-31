@@ -1,7 +1,20 @@
 import { BellRing, CalendarClock, CircleAlert } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type { BillStatus, BillType } from "../../../interfaces/bills";
 
 export type BillSummaryKey = "dueToday" | "upcoming" | "overdue";
+
+export type BillStatusFilter = "all" | BillStatus;
+export type BillTypeFilter = "all" | BillType;
+export type BillPeriodFilter = "all" | "today" | "7d" | "month";
+
+export interface BillsFilters {
+  searchTerm: string;
+  status: BillStatusFilter;
+  type: BillTypeFilter;
+  category: string;
+  period: BillPeriodFilter;
+}
 
 export const summaryCards: Array<{
   key: BillSummaryKey;
