@@ -21,3 +21,5 @@ export interface Bill {
   recurrence: BillRecurrence;
   installment: BillInstallment | null;
 }
+
+export type BillInput = Omit<Bill, "id" | "status">;
