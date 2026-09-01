@@ -12,9 +12,20 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
       ...data,
       id: crypto.randomUUID(),
       status: getBillStatusForDueDate(data.dueDate),
+      transactionId: null,
     };
 
     setBills((currentBills) => [...currentBills, bill]);
+  };
+
+  const markBillAsPaid = (billId: string, transactionId: string) => {
+    setBills((currentBills) =>
+      currentBills.map((bill) =>
+        bill.id === billId
+          ? { ...bill, status: "paid", transactionId }
+          : bill,
+      ),
+    );
   };
 
   const updateBill = (billId: string, data: BillInput) => {
@@ -34,7 +45,9 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <BillsContext.Provider value={{ bills, addBill, updateBill, removeBill }}>
+    <BillsContext.Provider
+      value={{ bills, addBill, updateBill, markBillAsPaid, removeBill }}
+    >
       {children}
     </BillsContext.Provider>
   );

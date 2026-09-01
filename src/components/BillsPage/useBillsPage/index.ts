@@ -1,6 +1,10 @@
 import { useContext, useRef, useState } from "react";
 import { BillsContext } from "../../../context/bills-context";
 import type { Bill, BillInput } from "../../../interfaces/bills";
+import type { TransactionTypes } from "../../../interfaces/transactions";
+import { TransactionContext } from "../../../context/TransactionContext";
+import { getLocalIsoDate } from "../../../utils/bill-status";
+import formatCurrency from "../../../utils/format-currency";
 import { filterBills, getBillCategories } from "../bill-filter-utils";
 import { getBillSummaryCounts } from "../bill-utils";
 import type { BillsFilters } from "../types";
@@ -14,7 +18,9 @@ const initialFilters: BillsFilters = {
 };
 
 export const useBillsPage = () => {
-  const { bills, addBill, updateBill, removeBill } = useContext(BillsContext);
+  const { bills, addBill, updateBill, markBillAsPaid, removeBill } =
+    useContext(BillsContext);
+  const { handleAddTransaction } = useContext(TransactionContext);
   const detailPanelRef = useRef<HTMLDivElement>(null);
   const [billBeingEdited, setBillBeingEdited] = useState<Bill | null>(null);
   const [isBillFormOpen, setIsBillFormOpen] = useState(false);
@@ -22,6 +28,11 @@ export const useBillsPage = () => {
     null,
   );
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [billPendingPayment, setBillPendingPayment] = useState<Bill | null>(
+    null,
+  );
+  const [paymentMethod, setPaymentMethod] =
+    useState<TransactionTypes["paymentMethod"]>("pix");
   const [filters, setFilters] = useState<BillsFilters>(initialFilters);
   const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
   const filteredBills = filterBills(bills, filters);
@@ -88,6 +99,26 @@ export const useBillsPage = () => {
     setFeedback("Conta excluída com sucesso.");
   };
 
+  const confirmBillPayment = () => {
+    if (!billPendingPayment) {
+      return;
+    }
+
+    const transactionId = handleAddTransaction({
+      description: billPendingPayment.description,
+      amount: billPendingPayment.amount,
+      type: billPendingPayment.type,
+      date: getLocalIsoDate(),
+      paymentMethod,
+    });
+
+    markBillAsPaid(billPendingPayment.id, transactionId);
+    setBillPendingPayment(null);
+    setFeedback(
+      `${billPendingPayment.type === "income" ? "Recebimento" : "Pagamento"} de ${billPendingPayment.description} no valor de ${formatCurrency(billPendingPayment.amount)} registrado com sucesso.`,
+    );
+  };
+
   return {
     data: {
       bills,
@@ -100,7 +131,9 @@ export const useBillsPage = () => {
       billBeingEdited,
       isBillFormOpen,
       billPendingDeletion,
+      billPendingPayment,
       feedback,
+      paymentMethod,
       filters,
       selectedBillId,
     },
@@ -112,6 +145,10 @@ export const useBillsPage = () => {
       requestBillDeletion: setBillPendingDeletion,
       cancelBillDeletion: () => setBillPendingDeletion(null),
       confirmBillDeletion,
+      requestBillPayment: setBillPendingPayment,
+      cancelBillPayment: () => setBillPendingPayment(null),
+      confirmBillPayment,
+      setPaymentMethod,
       dismissFeedback: () => setFeedback(null),
       setFilters,
       selectBill,

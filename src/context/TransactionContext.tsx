@@ -10,7 +10,7 @@ interface TransactionContextData {
   incomeTotal: number;
   expenseTotal: number;
   balanceTotal: number;
-  handleAddTransaction: (data: Omit<TransactionTypes, "id">) => void;
+  handleAddTransaction: (data: Omit<TransactionTypes, "id">) => string;
   handleUpdateTransaction: (
     transactionId: string,
     data: Omit<TransactionTypes, "id">,
@@ -156,9 +156,13 @@ export const TransactionProvider = ({
   const handleAddTransaction = (data: Omit<TransactionTypes, "id">) => {
     const newTransaction: TransactionTypes = {
       ...data,
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
     };
-    setTransactions([...transactions, newTransaction]);
+    setTransactions((currentTransactions) => [
+      ...currentTransactions,
+      newTransaction,
+    ]);
+    return newTransaction.id;
   };
 
   const handleUpdateTransaction = (

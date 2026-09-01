@@ -5,6 +5,7 @@ interface BillsContextData {
   bills: Bill[];
   addBill: (data: BillInput) => void;
   updateBill: (billId: string, data: BillInput) => void;
+  markBillAsPaid: (billId: string, transactionId: string) => void;
   removeBill: (billId: string) => void;
 }
 

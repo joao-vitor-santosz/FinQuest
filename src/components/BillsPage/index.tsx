@@ -85,6 +85,7 @@ export const BillsPage = () => {
         <div ref={detailPanelRef}>
           <BillDetails
             bill={data.selectedBill}
+            onPay={actions.requestBillPayment}
             onEdit={actions.openEditBillForm}
             onDelete={actions.requestBillDeletion}
           />
@@ -114,6 +115,53 @@ export const BillsPage = () => {
         onCancel={actions.cancelBillDeletion}
         onConfirm={actions.confirmBillDeletion}
       />
+      <ConfirmationModal
+        isOpen={state.billPendingPayment !== null}
+        title={
+          state.billPendingPayment?.type === "income"
+            ? "Confirmar recebimento?"
+            : "Confirmar pagamento?"
+        }
+        description={
+          <>
+            Ao confirmar, uma transação de{" "}
+            <strong className="font-medium text-white">
+              {state.billPendingPayment?.type === "income" ? "entrada" : "saída"}
+            </strong>{" "}
+            será criada e vinculada à conta{" "}
+            <strong className="font-medium text-white">
+              {state.billPendingPayment?.description}
+            </strong>
+            .
+          </>
+        }
+        confirmLabel={
+          state.billPendingPayment?.type === "income"
+            ? "Confirmar recebimento"
+            : "Confirmar pagamento"
+        }
+        confirmVariant="primary"
+        onCancel={actions.cancelBillPayment}
+        onConfirm={actions.confirmBillPayment}
+      >
+        <label className="mt-5 block text-sm font-medium text-white">
+          Método de pagamento
+          <select
+            value={state.paymentMethod}
+            onChange={(event) =>
+              actions.setPaymentMethod(
+                event.target.value as typeof state.paymentMethod,
+              )
+            }
+            className="mt-2 w-full rounded-xl border border-border-glass bg-bg-sidebar px-3 py-2 text-sm text-white outline-none transition-colors focus:border-income"
+          >
+            <option value="pix">Pix</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="debito">Débito</option>
+            <option value="credito">Crédito</option>
+          </select>
+        </label>
+      </ConfirmationModal>
       <ActionFeedback
         message={state.feedback}
         onDismiss={actions.dismissFeedback}

@@ -20,6 +20,7 @@ export interface Bill {
   status: BillStatus;
   recurrence: BillRecurrence;
   installment: BillInstallment | null;
+  transactionId: string | null;
 }
 
-export type BillInput = Omit<Bill, "id" | "status">;
+export type BillInput = Omit<Bill, "id" | "status" | "transactionId">;

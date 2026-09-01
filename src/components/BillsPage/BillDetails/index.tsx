@@ -2,6 +2,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CalendarClock,
+  CircleCheckBig,
   Landmark,
   Pencil,
   ReceiptText,
@@ -22,7 +23,7 @@ const statusClassNames = {
   overdue: "bg-expense/10 text-expense",
 } as const;
 
-export const BillDetails = ({ bill, onEdit, onDelete }: BillDetailsProps) => {
+export const BillDetails = ({ bill, onPay, onEdit, onDelete }: BillDetailsProps) => {
   if (!bill) {
     return (
       <aside className="animate-page-content-enter flex min-h-72 flex-col items-center justify-center rounded-2xl border border-border-glass bg-bg-card/40 px-6 text-center backdrop-blur-md">
@@ -38,6 +39,7 @@ export const BillDetails = ({ bill, onEdit, onDelete }: BillDetailsProps) => {
   const status = getEffectiveBillStatus(bill);
   const isIncome = bill.type === "income";
   const canEdit = status === "pending";
+  const canPay = status !== "paid";
 
   return (
     <aside className="animate-page-content-enter min-w-0 rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:p-6">
@@ -108,6 +110,16 @@ export const BillDetails = ({ bill, onEdit, onDelete }: BillDetailsProps) => {
       </dl>
 
       <div className="mt-6 grid grid-cols-2 gap-2">
+        {canPay && (
+          <button
+            type="button"
+            onClick={() => onPay(bill)}
+            className="col-span-2 flex items-center justify-center gap-2 rounded-xl bg-income px-3 py-2.5 text-sm font-semibold text-bg-card transition-opacity hover:opacity-90 cursor-pointer"
+          >
+            <CircleCheckBig size={17} />
+            {isIncome ? "Marcar como recebida" : "Marcar como paga"}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => onEdit(bill)}
