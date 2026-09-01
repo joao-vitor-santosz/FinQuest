@@ -3,8 +3,11 @@ import {
   ArrowUpRight,
   CalendarClock,
   CircleCheckBig,
+  CircleOff,
   Landmark,
   Pencil,
+  Pause,
+  Play,
   ReceiptText,
   Trash2,
 } from "lucide-react";
@@ -12,6 +15,7 @@ import formatCurrency from "../../../utils/format-currency";
 import { getEffectiveBillStatus } from "../../../utils/bill-status";
 import {
   billRecurrenceLabels,
+  billRecurrenceStatusLabels,
   billStatusLabels,
   formatBillDate,
 } from "../bill-utils";
@@ -23,7 +27,14 @@ const statusClassNames = {
   overdue: "bg-expense/10 text-expense",
 } as const;
 
-export const BillDetails = ({ bill, onPay, onEdit, onDelete }: BillDetailsProps) => {
+export const BillDetails = ({
+  bill,
+  onPay,
+  onSetRecurrenceStatus,
+  onEndRecurrence,
+  onEdit,
+  onDelete,
+}: BillDetailsProps) => {
   if (!bill) {
     return (
       <aside className="animate-page-content-enter flex min-h-72 flex-col items-center justify-center rounded-2xl border border-border-glass bg-bg-card/40 px-6 text-center backdrop-blur-md">
@@ -40,6 +51,10 @@ export const BillDetails = ({ bill, onPay, onEdit, onDelete }: BillDetailsProps)
   const isIncome = bill.type === "income";
   const canEdit = status === "pending";
   const canPay = status !== "paid";
+  const canManageRecurrence =
+    bill.recurrence !== "one-time" &&
+    status !== "paid" &&
+    bill.recurrenceStatus !== "ended";
 
   return (
     <aside className="animate-page-content-enter min-w-0 rounded-2xl border border-border-glass bg-bg-card/40 p-4 backdrop-blur-md sm:p-6">
@@ -77,6 +92,14 @@ export const BillDetails = ({ bill, onPay, onEdit, onDelete }: BillDetailsProps)
           </dt>
           <dd className="font-medium text-white">{formatBillDate(bill.dueDate)}</dd>
         </div>
+        {bill.recurrence !== "one-time" && (
+          <div className="flex justify-between gap-3">
+            <dt className="text-text-secondary">Ciclo</dt>
+            <dd className="font-medium text-white">
+              {billRecurrenceStatusLabels[bill.recurrenceStatus]}
+            </dd>
+          </div>
+        )}
         <div className="flex justify-between gap-3">
           <dt className="text-text-secondary">Tipo</dt>
           <dd className="font-medium text-white">
@@ -118,6 +141,35 @@ export const BillDetails = ({ bill, onPay, onEdit, onDelete }: BillDetailsProps)
           >
             <CircleCheckBig size={17} />
             {isIncome ? "Marcar como recebida" : "Marcar como paga"}
+          </button>
+        )}
+        {canManageRecurrence && (
+          <button
+            type="button"
+            onClick={() =>
+              onSetRecurrenceStatus(
+                bill,
+                bill.recurrenceStatus === "paused" ? "active" : "paused",
+              )
+            }
+            className="flex items-center justify-center gap-2 rounded-xl border border-border-glass px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5 cursor-pointer"
+          >
+            {bill.recurrenceStatus === "paused" ? (
+              <Play size={17} />
+            ) : (
+              <Pause size={17} />
+            )}
+            {bill.recurrenceStatus === "paused" ? "Retomar" : "Pausar"}
+          </button>
+        )}
+        {canManageRecurrence && (
+          <button
+            type="button"
+            onClick={() => onEndRecurrence(bill)}
+            className="flex items-center justify-center gap-2 rounded-xl border border-expense/30 px-3 py-2.5 text-sm font-medium text-expense transition-colors hover:bg-expense/10 cursor-pointer"
+          >
+            <CircleOff size={17} />
+            Encerrar
           </button>
         )}
         <button

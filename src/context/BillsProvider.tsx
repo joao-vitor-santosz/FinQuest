@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
-import type { Bill, BillInput } from "../interfaces/bills";
+import type { Bill, BillInput, BillRecurrenceStatus } from "../interfaces/bills";
+import { createNextBill } from "../utils/bill-schedule";
 import { getBillStatusForDueDate } from "../utils/bill-status";
 import { BillsContext } from "./bills-context";
 
@@ -12,6 +13,7 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
       ...data,
       id: crypto.randomUUID(),
       status: getBillStatusForDueDate(data.dueDate),
+      recurrenceStatus: data.recurrence === "one-time" ? "ended" : "active",
       transactionId: null,
     };
 
@@ -20,9 +22,27 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
 
   const markBillAsPaid = (billId: string, transactionId: string) => {
     setBills((currentBills) =>
+      currentBills.flatMap((bill) => {
+        if (bill.id !== billId || bill.status === "paid") {
+          return bill;
+        }
+
+        const paidBill = { ...bill, status: "paid" as const, transactionId };
+        const nextBill = createNextBill(paidBill);
+
+        return nextBill ? [paidBill, nextBill] : paidBill;
+      }),
+    );
+  };
+
+  const setBillRecurrenceStatus = (
+    billId: string,
+    recurrenceStatus: BillRecurrenceStatus,
+  ) => {
+    setBills((currentBills) =>
       currentBills.map((bill) =>
-        bill.id === billId
-          ? { ...bill, status: "paid", transactionId }
+        bill.id === billId && bill.recurrence !== "one-time"
+          ? { ...bill, recurrenceStatus }
           : bill,
       ),
     );
@@ -32,7 +52,17 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
     setBills((currentBills) =>
       currentBills.map((bill) =>
         bill.id === billId
-          ? { ...bill, ...data, status: getBillStatusForDueDate(data.dueDate) }
+          ? {
+              ...bill,
+              ...data,
+              status: getBillStatusForDueDate(data.dueDate),
+              recurrenceStatus:
+                data.recurrence === "one-time"
+                  ? "ended"
+                  : bill.recurrence === data.recurrence
+                    ? bill.recurrenceStatus
+                    : "active",
+            }
           : bill,
       ),
     );
@@ -46,7 +76,14 @@ export const BillsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <BillsContext.Provider
-      value={{ bills, addBill, updateBill, markBillAsPaid, removeBill }}
+      value={{
+        bills,
+        addBill,
+        updateBill,
+        markBillAsPaid,
+        setBillRecurrenceStatus,
+        removeBill,
+      }}
     >
       {children}
     </BillsContext.Provider>

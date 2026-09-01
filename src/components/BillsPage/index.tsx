@@ -86,6 +86,8 @@ export const BillsPage = () => {
           <BillDetails
             bill={data.selectedBill}
             onPay={actions.requestBillPayment}
+            onSetRecurrenceStatus={actions.updateRecurrenceStatus}
+            onEndRecurrence={actions.requestRecurrenceEnd}
             onEdit={actions.openEditBillForm}
             onDelete={actions.requestBillDeletion}
           />
@@ -162,6 +164,22 @@ export const BillsPage = () => {
           </select>
         </label>
       </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={state.billPendingRecurrenceEnd !== null}
+        title="Encerrar recorrência?"
+        description={
+          <>
+            A conta{" "}
+            <strong className="font-medium text-white">
+              {state.billPendingRecurrenceEnd?.description}
+            </strong>{" "}
+            continuará disponível para pagamento, mas não criará novas ocorrências.
+          </>
+        }
+        confirmLabel="Encerrar"
+        onCancel={actions.cancelRecurrenceEnd}
+        onConfirm={actions.confirmRecurrenceEnd}
+      />
       <ActionFeedback
         message={state.feedback}
         onDismiss={actions.dismissFeedback}

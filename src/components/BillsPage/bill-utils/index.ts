@@ -41,6 +41,12 @@ export const billRecurrenceLabels = {
   annual: "Anual",
 } as const;
 
+export const billRecurrenceStatusLabels = {
+  active: "Ativa",
+  paused: "Pausada",
+  ended: "Encerrada",
+} as const;
+
 type BillDateGroup = "overdue" | "today" | "upcoming" | "future" | "paid";
 
 const billDateGroupLabels: Record<BillDateGroup, string> = {

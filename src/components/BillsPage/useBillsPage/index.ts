@@ -1,10 +1,12 @@
 import { useContext, useRef, useState } from "react";
 import { BillsContext } from "../../../context/bills-context";
 import type { Bill, BillInput } from "../../../interfaces/bills";
+import type { BillRecurrenceStatus } from "../../../interfaces/bills";
 import type { TransactionTypes } from "../../../interfaces/transactions";
 import { TransactionContext } from "../../../context/TransactionContext";
 import { getLocalIsoDate } from "../../../utils/bill-status";
 import formatCurrency from "../../../utils/format-currency";
+import { hasNextBill } from "../../../utils/bill-schedule";
 import { filterBills, getBillCategories } from "../bill-filter-utils";
 import { getBillSummaryCounts } from "../bill-utils";
 import type { BillsFilters } from "../types";
@@ -18,8 +20,14 @@ const initialFilters: BillsFilters = {
 };
 
 export const useBillsPage = () => {
-  const { bills, addBill, updateBill, markBillAsPaid, removeBill } =
-    useContext(BillsContext);
+  const {
+    bills,
+    addBill,
+    updateBill,
+    markBillAsPaid,
+    setBillRecurrenceStatus,
+    removeBill,
+  } = useContext(BillsContext);
   const { handleAddTransaction } = useContext(TransactionContext);
   const detailPanelRef = useRef<HTMLDivElement>(null);
   const [billBeingEdited, setBillBeingEdited] = useState<Bill | null>(null);
@@ -31,6 +39,8 @@ export const useBillsPage = () => {
   const [billPendingPayment, setBillPendingPayment] = useState<Bill | null>(
     null,
   );
+  const [billPendingRecurrenceEnd, setBillPendingRecurrenceEnd] =
+    useState<Bill | null>(null);
   const [paymentMethod, setPaymentMethod] =
     useState<TransactionTypes["paymentMethod"]>("pix");
   const [filters, setFilters] = useState<BillsFilters>(initialFilters);
@@ -114,9 +124,38 @@ export const useBillsPage = () => {
 
     markBillAsPaid(billPendingPayment.id, transactionId);
     setBillPendingPayment(null);
+    const scheduleMessage = billPendingPayment.installment
+      ? hasNextBill(billPendingPayment)
+        ? ` A parcela ${billPendingPayment.installment.current + 1} de ${billPendingPayment.installment.total} foi agendada.`
+        : " A última parcela foi concluída."
+      : hasNextBill(billPendingPayment)
+        ? " A próxima ocorrência foi agendada."
+        : "";
     setFeedback(
-      `${billPendingPayment.type === "income" ? "Recebimento" : "Pagamento"} de ${billPendingPayment.description} no valor de ${formatCurrency(billPendingPayment.amount)} registrado com sucesso.`,
+      `${billPendingPayment.type === "income" ? "Recebimento" : "Pagamento"} de ${billPendingPayment.description} no valor de ${formatCurrency(billPendingPayment.amount)} registrado com sucesso.${scheduleMessage}`,
     );
+  };
+
+  const updateRecurrenceStatus = (
+    bill: Bill,
+    recurrenceStatus: BillRecurrenceStatus,
+  ) => {
+    setBillRecurrenceStatus(bill.id, recurrenceStatus);
+    setFeedback(
+      recurrenceStatus === "paused"
+        ? "Recorrência pausada. Nenhuma nova ocorrência será criada."
+        : "Recorrência retomada.",
+    );
+  };
+
+  const confirmRecurrenceEnd = () => {
+    if (!billPendingRecurrenceEnd) {
+      return;
+    }
+
+    setBillRecurrenceStatus(billPendingRecurrenceEnd.id, "ended");
+    setBillPendingRecurrenceEnd(null);
+    setFeedback("Recorrência encerrada. Nenhuma nova ocorrência será criada.");
   };
 
   return {
@@ -132,6 +171,7 @@ export const useBillsPage = () => {
       isBillFormOpen,
       billPendingDeletion,
       billPendingPayment,
+      billPendingRecurrenceEnd,
       feedback,
       paymentMethod,
       filters,
@@ -149,6 +189,10 @@ export const useBillsPage = () => {
       cancelBillPayment: () => setBillPendingPayment(null),
       confirmBillPayment,
       setPaymentMethod,
+      updateRecurrenceStatus,
+      requestRecurrenceEnd: setBillPendingRecurrenceEnd,
+      cancelRecurrenceEnd: () => setBillPendingRecurrenceEnd(null),
+      confirmRecurrenceEnd,
       dismissFeedback: () => setFeedback(null),
       setFilters,
       selectBill,
